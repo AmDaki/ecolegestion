@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "978071546173",
+    "project_id": "ecolegestion-e9fbf",
+    "storage_bucket": "ecolegestion-e9fbf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978071546173:android:fed01072a8821ad51a3d54",
+        "android_client_info": {
+          "package_name": "com.ecolegestion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZCRk8oUgkCHRm2WJ_vPdiWJLgc2J8M4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
