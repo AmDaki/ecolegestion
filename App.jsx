@@ -25,6 +25,7 @@ import AssignStudentsToClassScreen from './Screens/AjoutEleve';
 import ProfesseurScreen from './Screens/ProfesseurScreen';
 import AssignAbsencesScreen from './Screens/absence';
 import CreateClassScreen from './Screens/ajoutclasse';
+import ManageAbsencesScreen from './Screens/gererA';
 
 
 
@@ -168,6 +169,7 @@ function App  () {
            <Stack.Screen options={{headerShown: true}}  name="esl" component={ AssignStudentsToClassScreen}/>
            <Stack.Screen options={{headerShown: true}}  name="esk" component={ AssignAbsencesScreen}/>
            <Stack.Screen options={{headerShown: true}}  name="esc" component={ CreateClassScreen}/>
+           <Stack.Screen options={{headerShown: true}}  name="esq" component={ ManageAbsencesScreen}/>
  
 
       </Stack.Navigator>

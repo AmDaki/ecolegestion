@@ -100,7 +100,14 @@ function AdminScreen({ navigation }) {
   const getData = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await axios.post('http://192.168.1.69:5000/userdata', { token });
+  
+      // Récupère l'IP locale automatiquement
+      const localIP = await NetworkInfo.getIPAddress();
+  
+      // Formate l'URL dynamique de l'API avec l'IP récupérée
+      const apiUrl = `http://${localIP}:${API_PORT}/userdata`;
+  
+      const res = await axios.post(apiUrl, { token });
       setUserData(res.data.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des données utilisateur :', error);

@@ -292,7 +292,7 @@
 
 
 // export default AdminProfileScreen
-
+import { NetworkInfo } from 'react-native-network-info';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
@@ -305,6 +305,9 @@ import { Dimensions } from 'react-native';
 import { Card } from 'react-native-paper';
 import { LineChart,BarChart } from 'react-native-chart-kit';
 import { VictoryPie } from 'victory-native';
+import { API_URL } from '@env';
+
+const API_PORT = '5000';
 
 const chartData = {
   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -336,7 +339,8 @@ const AdminProfileScreen = () => {
 
   async function getAllData() {
     try {
-      const res = await axios.get('http://192.168.1.69:5000/get-all-user');
+      const res = await axios.post(`${API_URL}/get-all-user`);
+  
       setAllUserData(res.data.data);
     } catch (error) {
       console.error(error);
@@ -346,7 +350,14 @@ const AdminProfileScreen = () => {
   async function getData() {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await axios.post('http://192.168.1.69:5000/userdata', { token });
+  
+      // Récupère l'IP locale automatiquement
+      const localIP = await NetworkInfo.getIPAddress();
+  
+      // Formate l'URL dynamique de l'API avec l'IP récupérée
+      const apiUrl = `http://${localIP}:${API_PORT}/userdata`;
+  
+      const res = await axios.post(apiUrl, { token });
       setUserData(res.data.data);
     } catch (error) {
       console.error(error);

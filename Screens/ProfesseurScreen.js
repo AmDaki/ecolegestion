@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { View, ScrollView, Text, StyleSheet, TouchableOpacity, Animated,Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { NetworkInfo } from 'react-native-network-info';
 import { useEffect } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+
+const API_PORT = '5000';
 
 const ProfesseurScreen = () => {
   const navigation = useNavigation();
@@ -20,23 +24,43 @@ const ProfesseurScreen = () => {
 
   async function getAllData() {
     try {
-      const res = await axios.get('http://192.168.1.69:5000/get-all-user');
+      const res = await axios.post(`${API_URL}/get-all-user`);
+     
       setAllUserData(res.data.data);
     } catch (error) {
-      console.error(error);
+      
     }
   }
 
   async function getData() {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await axios.post('http://192.168.1.69:5000/userdata', { token });
+  
+      // Récupère l'IP locale automatiquement
+      const localIP = await NetworkInfo.getIPAddress();
+  
+      // Formate l'URL dynamique de l'API avec l'IP récupérée
+      const apiUrl = `http://${localIP}:${API_PORT}/userdata`;
+  
+      const res = await axios.post(apiUrl, { token });
       setUserData(res.data.data);
     } catch (error) {
-      console.error(error);
+      
     }
   }
-
+  
+  function deleteUser(data) {
+    NetworkInfo.getIPAddress().then(localIP => {
+      const apiUrl = `http://${localIP}:${API_PORT}/delete-user`;
+      axios.post(apiUrl, { id: data._id }).then(res => {
+        if (res.data.status === 'Ok') {
+          alert('User deleted');
+          getAllData();
+        }
+      });
+    });
+  }
+  
   function signOut() {
     AsyncStorage.multiRemove(['isLoggedIn', 'token', 'userType'], () => navigation.navigate('Login'));
   }
@@ -72,7 +96,7 @@ const ProfesseurScreen = () => {
 
         <TouchableOpacity onPress={() => navigation.navigate("Profil")}>
         <View style={styles.profileCard}>
-          <Image source={require('../assets/iconschool.png')} style={styles.image} />
+          <Image source={require('../prof1.jpg')} style={styles.image} />
           <View style={styles.cardDetails}>
             <Text style={styles.userType}>{userData.userType} </Text>
             <Text style={styles.userName}>{userData.nom} {userData.prenom}</Text>
@@ -236,7 +260,7 @@ const styles = StyleSheet.create({
   },
   userType: {
     fontSize: 16,
-    color: '#777',
+    color: 'black',
   },
   image: {
     width: 50,

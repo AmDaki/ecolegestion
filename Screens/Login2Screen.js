@@ -13,6 +13,7 @@ import styles from './style';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '@env'; // Importer API_URL depuis le fichier .env
 
 function Login2Screen() {
   const navigation = useNavigation();
@@ -26,8 +27,8 @@ function Login2Screen() {
     };
   
     try {
-      const res = await axios.post('http://192.168.1.69:5000/login-user', userData);
-      console.log(res.data); // Vérifiez la réponse de l'API
+      const res = await axios.post(`${API_URL}/login-user`, userData); // Utiliser API_URL ici
+      console.log(res.data); 
       if (res.data.status === 'ok') {
         Alert.alert('Connexion Réussie !!');
         await AsyncStorage.setItem('token', res.data.data);
@@ -36,13 +37,12 @@ function Login2Screen() {
         if (res.data.userType) {
           await AsyncStorage.setItem('userType', res.data.userType);
           
-          // Utilisation d'instructions if au lieu de switch
           if (res.data.userType === "Admin") {
             navigation.navigate('Dashboard');
           } else if (res.data.userType === "Professeur") {
             navigation.navigate('Professeur');
           } else if (res.data.userType === "Eleve") {
-            navigation.navigate('Eleve');
+            navigation.navigate('el');
           } else if (res.data.userType === "Parent") {
             navigation.navigate('Parent');
           } else if (res.data.userType === "Surveillant") {
@@ -77,12 +77,12 @@ function Login2Screen() {
       contentContainerStyle={{ flexGrow: 1 }}
       keyboardShouldPersistTaps={'always'}>
       <View style={{ backgroundColor: 'white' }}>
-        <View style={styles.logoContainer}>
+        {/* <View style={styles.logoContainer}>
           <Image
             style={styles.logo}
             source={require('../assets/signUp.png')}
           />
-        </View>
+        </View> */}
         <View style={styles.loginContainer}>
           <Text style={styles.text_header}>Connectez Vous !!!</Text>
           <View style={styles.action}>
