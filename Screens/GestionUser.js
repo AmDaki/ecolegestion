@@ -111,34 +111,25 @@ function AdminScreen({ navigation }) {
   };
 
   // Suppression d'un utilisateur
-  const deleteUser = (data) => {
-    Alert.alert(
-      'Confirmation',
-      `Voulez-vous vraiment supprimer ${data.nom} ${data.prenom} ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Supprimer',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const res = await axios.post(`${API_URL}/delete-user`, { id: data._id });
-              if (res.data.status === 'Ok') {
-                Alert.alert('Succès', 'Utilisateur supprimé avec succès.');
-                getAllData();
-              } else {
-                Alert.alert('Erreur', 'Impossible de supprimer l\'utilisateur.');
-              }
-            } catch (error) {
-              console.error('Erreur lors de la suppression de l’utilisateur :', error);
-              Alert.alert('Erreur', 'Impossible de supprimer l\'utilisateur.');
-            }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
+  const handleDelete = async () => {
+    try {
+        const res = await axios.post(`${API_URL}/delete-user`, {
+            identifiant: userData.identifiant,
+            userType: userData.userType, // Inclure le type d'utilisateur dans la requête
+        });
+        
+        if (res.data.status === 'Ok') {
+            Alert.alert('Succès', 'Utilisateur supprimé avec succès.');
+            navigation.goBack(); // Rediriger après la suppression
+        } else {
+            Alert.alert('Erreur', res.data.data);
+        }
+    } catch (error) {
+        console.error(error);
+        Alert.alert('Erreur', 'Erreur lors de la suppression de l\'utilisateur.');
+    }
+};
+
 
    
 
@@ -151,6 +142,25 @@ const categorizedUsers = {
   
 };
 
+const deleteUser = async (user) => {
+  try {
+    const res = await axios.post(`${API_URL}/delete-user`, {
+      identifiant: user.identifiant,  // Passer l'identifiant de l'utilisateur
+      userType: user.userType,        // Passer le type d'utilisateur (Admin, Professeur, etc.)
+    });
+
+    if (res.data.status === 'Ok') {
+      Alert.alert('Succès', 'Utilisateur supprimé avec succès.');
+      getAllData(); // Rafraîchir la liste des utilisateurs après suppression
+    } else {
+      Alert.alert('Erreur', res.data.data);
+    }
+  } catch (error) {
+    console.error(error);
+    Alert.alert('Erreur', 'Erreur lors de la suppression de l\'utilisateur.');
+  }
+};
+
 
 // Composant pour afficher chaque utilisateur avec un bouton de suppression et d'édition
 const UserCard = ({ data, onEdit, deleteUser }) => (
@@ -161,15 +171,18 @@ const UserCard = ({ data, onEdit, deleteUser }) => (
       <Text style={styles.userType}>{data.userType}</Text>
     </View>
     <View style={styles.actionIcons}>
-      <TouchableOpacity onPress={onEdit} style={styles.iconButton}>
+      <TouchableOpacity onPress={() => onEdit(data)} style={styles.iconButton}>
         <Icon name="account-edit" size={25} color="#4CAF50" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={deleteUser} style={styles.iconButton}>
+      <TouchableOpacity onPress={() => deleteUser(data)} style={styles.iconButton}>
         <Icon name="delete" size={25} color="#F44336" />
       </TouchableOpacity>
     </View>
   </View>
 );
+const editUser = (user) => {
+  navigation.navigate('EditUser', { user });
+};
 
 return (
   <ScrollView style={styles.container}>
@@ -197,7 +210,7 @@ return (
       <View key={category}>
         <Text style={styles.categoryTitle}>{category}</Text>
         {categorizedUsers[category].map((user) => (
-          <UserCard key={user.identifiant} data={user} onEdit={() => editUser(user)} deleteUser={() => deleteUser(user.identifiant)} />
+          <UserCard key={user.identifiant} data={user} onEdit={() => editUser(user)}  deleteUser={deleteUser}  />
         ))}
       </View>
 

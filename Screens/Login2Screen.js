@@ -13,12 +13,16 @@ import styles from './style';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env'; // Import API_URL depuis le fichier .env
+import { API_URL } from '@env'; 
+
+console.log({ API_URL });
 
 function Login2Screen() {
   const navigation = useNavigation();
   const [identifiant, setIdentifiant] = useState('');
   const [password, setPassword] = useState('');
+  
+  
 const handleSubmit = async () => {
   if (!API_URL) {
     console.error("API_URL is not defined");
@@ -30,9 +34,9 @@ const handleSubmit = async () => {
     identifiant,
     password,
   };
-  console.log('API_URL:', API_URL);
+ 
   try {
-    const res = await axios.post(`${API_URL}/login-user`, userData); // Utilise API_URL ici
+    const res = await axios.post(`${API_URL}/login-user`, userData); 
     console.log(res.data); 
     if (res.data.status === 'ok') {
       Alert.alert('Connexion Réussie !!');
@@ -119,9 +123,7 @@ const handleSubmit = async () => {
               marginTop: 8,
               marginRight: 10,
             }}>
-            <Text style={{ color: '#000', fontWeight: '700' }}>
-              Mot de Passe Oublié?
-            </Text>
+          
           </View>
         </View>
         <View style={styles.button}>

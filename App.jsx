@@ -1,18 +1,19 @@
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import React, { useState } from 'react';
-import LoginScreen from './Screens/LoginScreen';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AdminProfileScreen from './Screens/AdminScreen';
-import RegisterScreen from './Screens/RegisterScreen';
-import BottomTab from './Tabs/BottomTab';
+
+
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import DrawerContent from './Screens/DrawerContent';
 import EleveScreen from './Screens/EleveScreen';
 import AdminScreen from './Screens/GestionUser';
-import HomeScreen from './Screens/HomeScreen';
+
 import Login2Screen from './Screens/Login2Screen';
 import Register2Screen from './Screens/Register2Screen';
 
@@ -23,6 +24,10 @@ import AssignAbsencesScreen from './Screens/absence';
 import CreateClassScreen from './Screens/ajoutclasse';
 import ManageAbsencesScreen from './Screens/gererA';
 import ParentHomeScreen from './Screens/ParentScreen';
+import HomeScreen from './Screens/ProfileView';
+import EditUserScreen from './Screens/EditUserScreen';
+import ScheduleScreen from './Screens/EmploiTemps';
+import AssignClassScreen from './Screens/AjoutEleve';
 
 
 
@@ -109,6 +114,59 @@ const LoginNav = () => {
 
 
 const Stack = createNativeStackNavigator();
+const Tab = createMaterialBottomTabNavigator();
+
+const TabNav = () => {
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      activeColor="#fff"
+      shifting={true}
+      barStyle={{ backgroundColor: '#0163d2' }}
+    >
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={{
+          tabBarLabel: 'Accueil',
+          tabBarIcon: ({ color }) => (
+            <Icon name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Schedule" 
+        component={ScheduleScreen} 
+        options={{
+          tabBarLabel: 'Emploi du Temps',
+          tabBarIcon: ({ color }) => (
+            <Icon name="calendar" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Professeur" 
+        component={ProfesseurScreen} 
+        options={{
+          tabBarLabel: 'Professeur',
+          tabBarIcon: ({ color }) => (
+            <Icon name="account" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Parent" 
+        component={ParentHomeScreen} 
+        options={{
+          tabBarLabel: 'Parent',
+          tabBarIcon: ({ color }) => (
+            <Icon name="account-group" color={color} size={26} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 function App  () {
 
@@ -147,7 +205,9 @@ function App  () {
             {/* <Stack.Screen options={{headerShown: true}} name="LoginScreen" component={LoginScreen}/>      */}
             {/* <Stack.Screen options={{headerShown: false}} name="ACC" component={ConnectAcceptScreen}/>    */}
                 <Stack.Screen options={{headerShown: true}} name="Profil" component={HomeScreen}/>      
-               <Stack.Screen options={{headerShown: true}} name="Professeur" component={ProfesseurScreen}/>   
+               <Stack.Screen options={{headerShown: true}} name="Professeur" component={ProfesseurScreen}/>  
+               <Stack.Screen options={{headerShown: true}} name="EditUser" component={EditUserScreen} /> 
+               <Stack.Screen options={{headerShown: true}} name="Emploi du Temps" component={ScheduleScreen} /> 
                     
              
 
@@ -170,11 +230,11 @@ function App  () {
           headerTintColor: '#fff',
           headerTitleAlign: 'center',}}  name="Dashboard Parent" component={ParentHomeScreen}/>
          
-           <Stack.Screen options={{headerShown: false}}  name="tab" component={BottomTab}/> 
+
            <Stack.Screen options={{headerShown: false}}  name="el" component={EleveScreen}/>   
             <Stack.Screen options={{headerShown: false}}  name="pr" component={ProfesseurScreen}/>           
             <Stack.Screen options={{headerShown: true}}  name="es" component={TeacherAssignmentScreen}/>    
-           <Stack.Screen options={{headerShown: true}}  name="esl" component={ AssignStudentsToClassScreen}/>
+           <Stack.Screen options={{headerShown: true}}  name="esl" component={ AssignClassScreen}/>
            <Stack.Screen options={{headerShown: true}}  name="esk" component={ AssignAbsencesScreen}/>
            <Stack.Screen options={{headerShown: true}}  name="esc" component={ CreateClassScreen}/>
            <Stack.Screen options={{headerShown: true}}  name="esq" component={ ManageAbsencesScreen}/>

@@ -2,41 +2,53 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { API_URL } from '@env'; // Import API_URL depuis le fichier .env
 
 const TeacherAssignmentScreen = () => {
-  const [teachers, setTeachers] = useState([]);
+  const [professeurs, setProfesseurs] = useState([]);
   const [classes, setClasses] = useState([]);
-  const [selectedTeacher, setSelectedTeacher] = useState('');
+  const [selectedProfesseur, setSelectedProfesseur] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
 
   useEffect(() => {
-    // Remplacez par des appels API pour obtenir les vraies données
-    const fetchTeachersAndClasses = async () => {
+    const fetchProfesseursAndClasses = async () => {
       try {
-        const teachersResponse = await axios.get('http://localhost:5000/get-all-teachers');
-        const classesResponse = await axios.get('http://localhost:5000/get-all-classes');
-        setTeachers(teachersResponse.data.teachers);
-        setClasses(classesResponse.data.classes);
+        const professeursResponse = await axios.get(`${API_URL}/get-all-professeurs`);
+        const classesResponse = await axios.get(`${API_URL}/get-all-classes`);
+
+        console.log("Professeurs:", professeursResponse.data.professeurs); // Afficher les professeurs reçus
+        console.log("Classes:", classesResponse.data.classes); // Afficher les classes reçues
+
+        // Vérification si les données sont valides avant de les enregistrer
+        if (professeursResponse.data.professeurs && professeursResponse.data.professeurs.length > 0) {
+          setProfesseurs(professeursResponse.data.professeurs);
+          setSelectedProfesseur(professeursResponse.data.professeurs[0].identifiant); // Sélectionner le premier professeur par défaut
+        }
+
+        if (classesResponse.data.classes && classesResponse.data.classes.length > 0) {
+          setClasses(classesResponse.data.classes);
+          setSelectedClass(classesResponse.data.classes[0].nomClasse); // Sélectionner la première classe par défaut
+        }
       } catch (error) {
-        console.error('Error fetching teachers and classes:', error);
+        console.error('Erreur lors de la récupération des professeurs et des classes:', error);
       }
     };
 
-    fetchTeachersAndClasses();
+    fetchProfesseursAndClasses();
   }, []);
 
   const handleAssignClass = async () => {
-    if (!selectedTeacher || !selectedClass) {
-      Alert.alert('Erreur', 'Veuillez sélectionner un enseignant et une classe.');
+    if (!selectedProfesseur || !selectedClass) {
+      Alert.alert('Erreur', 'Veuillez sélectionner un professeur et une classe.');
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/assign-class-to-teacher', {
-        teacherId: selectedTeacher,
-        classId: selectedClass,
+      const response = await axios.post(`${API_URL}/assign-class-to-professeur`, {
+        professeurIdentifiant: selectedProfesseur, // Utiliser professeurIdentifiant au lieu de professeurId
+        nomClasse: selectedClass, // Utiliser nomClasse au lieu de classId
       });
+      
 
       if (response.data.status === 'ok') {
         Alert.alert('Succès', 'Classe attribuée avec succès !');
@@ -44,7 +56,7 @@ const TeacherAssignmentScreen = () => {
         Alert.alert('Erreur', 'Une erreur est survenue lors de l\'attribution.');
       }
     } catch (error) {
-      console.error('Error assigning class:', error);
+      console.error('Erreur lors de l\'attribution de la classe:', error);
       Alert.alert('Erreur', 'Impossible d\'attribuer la classe.');
     }
   };
@@ -52,27 +64,35 @@ const TeacherAssignmentScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Espace Enseignant</Text>
-        <FontAwesome name="chalkboard-teacher" size={50} color="#fff" />
+        <Text style={styles.headerText}>Espace Professeur</Text>
       </View>
-
+      
       <View style={styles.statsCard}>
-        <Text style={styles.statsText}>Enseignants inscrits : {teachers.length}</Text>
-        <Text style={styles.statsText}>Classes disponibles : {classes.length}</Text>
+        <Text style={styles.statsText}>Professeurs disponibles : {professeurs ? professeurs.length : 0}</Text>
+        <Text style={styles.statsText}>Classes disponibles : {classes ? classes.length : 0}</Text>
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={styles.label}>Sélectionnez un Enseignant :</Text>
+        <Text style={styles.label}>Sélectionnez un Professeur :</Text>
         <View style={styles.pickerContainer}>
           <Picker
-            selectedValue={selectedTeacher}
-            onValueChange={(itemValue) => setSelectedTeacher(itemValue)}
+            selectedValue={selectedProfesseur}
+            onValueChange={(itemValue) => setSelectedProfesseur(itemValue)}
             style={styles.picker}
           >
-            <Picker.Item label="-- Choisissez un enseignant --" value="" />
-            {teachers.map(teacher => (
-              <Picker.Item key={teacher.id} label={teacher.name} value={teacher.id} />
-            ))}
+            <Picker.Item label="-- Choisissez un professeur --" value="" />
+            {professeurs && professeurs.length > 0 ? (
+              professeurs.map(professeur => (
+                <Picker.Item 
+    key={professeur.identifiant} 
+    label={professeur.label}  // Utilise le champ 'label' pour afficher nom + prénom
+    value={professeur.identifiant} 
+/>
+
+              ))
+            ) : (
+              <Picker.Item label="Aucun professeur disponible" value="" />
+            )}
           </Picker>
         </View>
       </View>
@@ -86,9 +106,13 @@ const TeacherAssignmentScreen = () => {
             style={styles.picker}
           >
             <Picker.Item label="-- Choisissez une classe --" value="" />
-            {classes.map(cls => (
-              <Picker.Item key={cls.id} label={cls.name} value={cls.id} />
-            ))}
+            {classes && classes.length > 0 ? (
+              classes.map(cls => (
+                <Picker.Item key={cls.nomClasse} label={cls.nomClasse} value={cls.nomClasse} />
+              ))
+            ) : (
+              <Picker.Item label="Aucune classe disponible" value="" />
+            )}
           </Picker>
         </View>
       </View>

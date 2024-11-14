@@ -1,239 +1,185 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, TextInput } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import CheckBox from '@react-native-community/checkbox';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import axios from 'axios';
+import { API_URL } from '@env';
+import { Picker } from '@react-native-picker/picker';
 
-const AssignStudentsToClassScreen = () => {
-  const [classes, setClasses] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [assignedStudents, setAssignedStudents] = useState([]);
-  const [selectedClass, setSelectedClass] = useState(null);
+const AssignClassScreen = () => {
+  const [selectedLevel, setSelectedLevel] = useState('');
+  const [availableClasses, setAvailableClasses] = useState([]);
+  const [selectedClass, setSelectedClass] = useState('');
+  const [availableStudents, setAvailableStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
 
-  // Fetch classes and students from API (or database)
+  const levels = ['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'];
+
   useEffect(() => {
-    // Fetch classes
-    axios.get('http://your-server-url/get-classes')
-      .then(response => {
-        setClasses(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-
-    // Fetch students
-    axios.get('http://your-server-url/get-students')
-      .then(response => {
-        setStudents(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, []);
-
-  // Fetch students assigned to the selected class
-  const fetchAssignedStudents = (classId) => {
-    axios.get(`http://your-server-url/get-assigned-students/${classId}`)
-      .then(response => {
-        setAssignedStudents(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
-
-  // Handle class selection
-  const handleClassSelection = (classId) => {
-    setSelectedClass(classId);
-    fetchAssignedStudents(classId);
-  };
-
-  // Handle selection of students
-  const handleStudentSelection = (studentId) => {
-    if (selectedStudents.includes(studentId)) {
-      setSelectedStudents(selectedStudents.filter(id => id !== studentId));
-    } else {
-      setSelectedStudents([...selectedStudents, studentId]);
+    if (selectedLevel) {
+      axios.get(`${API_URL}/get-all-classes?niveau=${selectedLevel}`)
+        .then(response => setAvailableClasses(response.data || []))
+        .catch(error => console.error('Erreur chargement des classes:', error));
     }
-  };
+  }, [selectedLevel]);
 
-  // Handle class assignment
-  const handleAssignStudents = () => {
-    if (!selectedClass) {
-      Alert.alert('Erreur', 'Veuillez sélectionner une classe.');
+  useEffect(() => {
+    if (selectedLevel) {
+      axios.get(`${API_URL}/get-eleves-by-niveau?NiveauClasse=${selectedLevel}`)
+        .then(response => setAvailableStudents(response.data.eleves || []))
+        .catch(error => console.error('Erreur chargement des élèves:', error));
+    }
+  }, [selectedLevel]);
+
+  const handleAssignClass = () => {
+    if (!selectedLevel || !selectedClass || selectedStudents.length === 0) {
+      Alert.alert('Erreur', 'Veuillez sélectionner un niveau, une classe, et au moins un élève.');
       return;
     }
 
-    axios.post('http://your-server-url/assign-students', {
+    const assignmentData = {
+      level: selectedLevel,
       classId: selectedClass,
-      students: selectedStudents
-    })
-    .then(() => {
-      Alert.alert('Succès', 'Les élèves ont été attribués à la classe avec succès.');
-      setSelectedStudents([]); // Reset student selection after assignment
-      fetchAssignedStudents(selectedClass); // Update assigned students list
-    })
-    .catch(error => {
-      console.error(error);
-      Alert.alert('Erreur', 'Une erreur est survenue lors de l\'attribution.');
-    });
-  };
+      studentIds: selectedStudents,
+    };
 
-  // Handle student search
-  const filteredStudents = students.filter(student => 
-    student.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Handle unassign student
-  const handleUnassignStudent = (studentId) => {
-    axios.post('http://your-server-url/unassign-student', { classId: selectedClass, studentId })
-    .then(() => {
-      Alert.alert('Succès', 'L\'élève a été retiré de la classe.');
-      fetchAssignedStudents(selectedClass);
-    })
-    .catch(error => {
-      console.error(error);
-      Alert.alert('Erreur', 'Une erreur est survenue lors du retrait.');
-    });
+    axios.post(`${API_URL}/assign-class-to-eleves`, assignmentData)
+      .then(() => Alert.alert('Succès', 'Classe attribuée avec succès!'))
+      .catch(error => Alert.alert('Erreur', 'Impossible d\'attribuer la classe.'));
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Attribuer des élèves à une classe</Text>
-      
-      {/* Picker for class selection */}
-      <Text style={styles.label}>Sélectionner une classe :</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={selectedClass}
-          onValueChange={(itemValue) => handleClassSelection(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Choisir une classe" value={null} />
-          {classes.map((classItem) => (
-            <Picker.Item key={classItem.id} label={classItem.name} value={classItem.id} />
-          ))}
-        </Picker>
-      </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Attribuer Classe aux Élèves</Text>
 
-      {/* Display assigned students */}
-      <Text style={styles.label}>Élèves déjà attribués :</Text>
-      <FlatList
-        data={assignedStudents}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.studentItem}>
-            <Text>{item.name}</Text>
-            <TouchableOpacity onPress={() => handleUnassignStudent(item.id)}>
-              <Text style={styles.unassignButton}>Retirer</Text>
-            </TouchableOpacity>
+      <Text style={styles.label}>Niveau :</Text>
+      <Picker
+        selectedValue={selectedLevel}
+        onValueChange={setSelectedLevel}
+        style={styles.picker}>
+        <Picker.Item label="Sélectionner le niveau" value="" />
+        {levels.map(level => (
+          <Picker.Item key={level} label={level} value={level} />
+        ))}
+      </Picker>
+
+      {selectedLevel && (
+        <>
+          <Text style={styles.label}>Classe :</Text>
+          <Picker
+            selectedValue={selectedClass}
+            onValueChange={setSelectedClass}
+            style={styles.picker}>
+
+            <Picker.Item label="Sélectionner une classe" value="" />
+            {selectedClass.length > 0 ? (
+              selectedClass.map(cls => (
+                <Picker.Item key={cls.nomClasse} label={cls.nomClasse} value={cls.nomClasse} />
+              ))
+            ) : (
+              <Picker.Item label="Aucune classe disponible" value="" />
+            )}
+          </Picker>
+        </>
+      )}
+
+      {selectedLevel && (
+        <>
+          <Text style={styles.label}>Élèves :</Text>
+          <View style={styles.studentsList}>
+            {availableStudents.length > 0 ? (
+              availableStudents.map((student) => (
+                <TouchableOpacity
+                  key={student._id}
+                  style={[
+                    styles.studentItem,
+                    selectedStudents.includes(student._id) && styles.selectedStudent
+                  ]}
+                  onPress={() => {
+                    if (selectedStudents.includes(student._id)) {
+                      setSelectedStudents(selectedStudents.filter(id => id !== student._id));
+                    } else {
+                      setSelectedStudents([...selectedStudents, student._id]);
+                    }
+                  }}>
+                  <Text style={styles.studentText}>{`${student.nom} ${student.prenom}`}</Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text style={styles.noStudentsText}>Aucun élève trouvé.</Text>
+            )}
           </View>
-        )}
-        style={styles.assignedList}
-      />
+        </>
+      )}
 
-      {/* Search bar for students */}
-      <Text style={styles.label}>Rechercher des élèves :</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Nom de l'élève"
-        onChangeText={setSearchTerm}
-      />
-
-      {/* List of students */}
-      <Text style={styles.label}>Sélectionner des élèves :</Text>
-      <FlatList
-        data={filteredStudents}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.studentItem}>
-            <Text>{item.name}</Text>
-            <CheckBox
-              value={selectedStudents.includes(item.id)}
-              onValueChange={() => handleStudentSelection(item.id)}
-            />
-          </View>
-        )}
-        style={styles.studentList}
-      />
-
-      {/* Button to assign students */}
-      <TouchableOpacity style={styles.assignButton} onPress={handleAssignStudents}>
-        <Text style={styles.assignButtonText}>Attribuer à la classe</Text>
+      <TouchableOpacity style={styles.assignButton} onPress={handleAssignClass}>
+        <Text style={styles.buttonText}>Attribuer la Classe</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
-// Styles for the screen
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f9f9f9',
+    flexGrow: 1,
+    padding: 20,
+    backgroundColor: '#FAFAFA',
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#420475',
-    marginBottom: 20,
+    color: '#333',
     textAlign: 'center',
+    marginBottom: 20,
   },
   label: {
-    fontSize: 18,
-    color: '#333',
-    marginBottom: 8,
-  },
-  pickerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    elevation: 3,
-    marginBottom: 20,
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 5,
   },
   picker: {
-    height: 50,
-    width: '100%',
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+    borderColor: '#DDD',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    color: '#555',
+    marginBottom: 20,
+  },
+  studentsList: {
+    marginBottom: 20,
   },
   studentItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  studentList: {
-    marginBottom: 20,
-  },
-  assignedList: {
-    marginBottom: 20,
-  },
-  searchInput: {
-    height: 40,
-    borderColor: '#ddd',
-    borderWidth: 1,
+    backgroundColor: '#EFEFEF',
+    padding: 12,
     borderRadius: 8,
-    marginBottom: 20,
-    paddingHorizontal: 8,
+    marginBottom: 10,
   },
-  unassignButton: {
-    color: '#d9534f',
-    fontWeight: 'bold',
+  selectedStudent: {
+    backgroundColor: '#C3E0F7',
+  },
+  studentText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  noStudentsText: {
+    fontSize: 16,
+    color: '#AAA',
+    textAlign: 'center',
+    marginTop: 10,
   },
   assignButton: {
-    backgroundColor: '#420475',
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: '#1E90FF',
+    paddingVertical: 15,
+    borderRadius: 10,
     alignItems: 'center',
+    marginTop: 20,
   },
-  assignButtonText: {
-    fontSize: 16,
-    color: '#fff',
+  buttonText: {
+    fontSize: 18,
+    color: '#FFF',
     fontWeight: 'bold',
   },
 });
 
-export default AssignStudentsToClassScreen;
+export default AssignClassScreen;

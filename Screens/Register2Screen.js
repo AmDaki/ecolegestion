@@ -17,6 +17,7 @@ const {
   import axios from 'axios';
   import Toast from 'react-native-toast-message';
   import {RadioButton} from 'react-native-paper';
+  import { API_URL } from '@env';
   
   function Register2Screen({props}) {
     const [identifiant, setIdentifiant] = useState('');
@@ -30,6 +31,8 @@ const {
     const [showPassword, setShowPassword] = useState(false);
     const [userType, setUserType] = useState('');
     const [secretText, setSecretText] = useState('');
+    const [NiveauClasse, setNiveauClasse] = useState('');
+
     const [Matiere, setMatiere] = useState('');
     const [Classe, setClasse] = useState('');
     const [DateNaissance, setDatNaiss] = useState('');
@@ -42,14 +45,16 @@ const {
          prenom: prenom,
          password: password,
          telephone: telephone, 
-         userType
+         userType,
+         NiveauClasse,
+         DateNaissance,
       };
       // if (nameVerify && emailVerify && passwordVerify && mobileVerify) {
         if (userType == 'Admin' && secretText != '1243') {
           return Alert.alert('Invalid Admin');
         }
         axios
-          .post('http://192.168.1.69:5000/register', userData)
+          .post(`${API_URL}/register`, userData)
           .then(res => {
             console.log(res.data);
             if (res.data.status == 'ok') {
@@ -80,6 +85,11 @@ const {
       function handlePrenom(e) {
         const prenomVar = e.nativeEvent.text;
         setPrenom(prenomVar);
+      }
+
+      function handleNiveauClasse(e) {
+        const niveauVar = e.nativeEvent.text;
+        setNiveauClasse(niveauVar);
       }
 
       function handleTelephone(e) {
@@ -213,9 +223,9 @@ const {
                   style={styles.smallIcon}
                 />
                 <TextInput
-                  placeholder="Classe"
+                  placeholder="NiveauClasse"
                   style={styles.textInput}
-                  onChange={e => setClasse(e.nativeEvent.text)}
+                  onChange={e => handleNiveauClasse(e)}
                 />
               </View>
               

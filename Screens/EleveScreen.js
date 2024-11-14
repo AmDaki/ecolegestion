@@ -10,6 +10,8 @@ import axios from 'axios';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 const EleveAccueilScreen = () => {
   const navigation = useNavigation();
   const [fadeAnim] = useState(new Animated.Value(0)); // Animation pour effet de fondu
@@ -37,12 +39,16 @@ const EleveAccueilScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
+       <View style={styles.header}>
+        <Text style={styles.headerText}>Bienvenue !!!</Text>
+        <FontAwesome name="user-circle" size={50} color="#fff" />
+      </View>
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        <Text style={styles.header}>Bienvenue, {userData.nom}</Text>
+     
 
         <TouchableOpacity onPress={() => navigation.navigate("Profil")}>
           <View style={styles.profileCard}>
-            <Image source={require('../assets/iconschool.png')} style={styles.image} />
+            <Image source={require('../assets/student.jpg')} style={styles.image} />
             <View style={styles.cardDetails}>
               <Text style={styles.userType}>{userData.userType}</Text>
               <Text style={styles.userName}>{userData.nom} {userData.prenom}</Text>
@@ -86,17 +92,30 @@ const EleveAccueilScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#E8F5E9',
     padding: 16,
   },
   content: {
     flex: 1,
   },
+  // header: {
+  //   fontSize: 24,
+  //   fontWeight: 'bold',
+  //   marginBottom: 16,
+  //   color: '#333',
+  // },
   header: {
+    backgroundColor: '#3E4A89',
+    padding: 20,
+    width: '100%',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#333',
+    color: '#fff',
   },
   profileCard: {
     flexDirection: 'row',

@@ -6,6 +6,9 @@ import { NetworkInfo } from 'react-native-network-info';
 import { useEffect } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { API_URL } from '@env'; // Import API_URL depuis le fichier .env
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 
 const API_PORT = '5000';
@@ -18,6 +21,7 @@ const ProfesseurScreen = () => {
   
 
   useEffect(() => {
+    fetchUserData();
     getData();
     getAllData();
   }, []);
@@ -35,42 +39,26 @@ const ProfesseurScreen = () => {
   async function getData() {
     try {
       const token = await AsyncStorage.getItem('token');
-  
-      
       const res = await axios.post(`${API_URL}/userdata`, { token });
       setUserData(res.data.data);
-  
-     
-      setUserData(res.data.data);
     } catch (error) {
-      
+      console.error;
     }
   }
   
-  function deleteUser(data) {
-    NetworkInfo.getIPAddress().then(localIP => {
-      const apiUrl = `http://${localIP}:${API_PORT}/delete-user`;
-      axios.post(apiUrl, { id: data._id }).then(res => {
-        if (res.data.status === 'Ok') {
-          alert('User deleted');
-          getAllData();
-        }
-      });
-    });
-  }
   
-  function signOut() {
-    AsyncStorage.multiRemove(['isLoggedIn', 'token', 'userType'], () => navigation.navigate('Login'));
-  }
+  const fetchUserData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.post('http://192.168.1.69:5000/userdata', { token });
+      setUserData(response.data.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+ 
 
-  function deleteUser(data) {
-    axios.post('http://192.168.1.69:5000/delete-user', { id: data._id }).then(res => {
-      if (res.data.status === 'Ok') {
-        alert('User deleted');
-        getAllData();
-      }
-    });
-  }
+  
 
   // Animation for fade-in effect when component mounts
   React.useEffect(() => {
@@ -199,7 +187,7 @@ const ProfesseurScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#E8F5E9',
   },
   content: {
     padding: 20,
@@ -254,7 +242,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'black',
   },
   userType: {
     fontSize: 16,
