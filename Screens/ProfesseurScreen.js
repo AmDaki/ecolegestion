@@ -36,13 +36,11 @@ const ProfesseurScreen = () => {
     try {
       const token = await AsyncStorage.getItem('token');
   
-      // Récupère l'IP locale automatiquement
-      const localIP = await NetworkInfo.getIPAddress();
+      
+      const res = await axios.post(`${API_URL}/userdata`, { token });
+      setUserData(res.data.data);
   
-      // Formate l'URL dynamique de l'API avec l'IP récupérée
-      const apiUrl = `http://${localIP}:${API_PORT}/userdata`;
-  
-      const res = await axios.post(apiUrl, { token });
+     
       setUserData(res.data.data);
     } catch (error) {
       

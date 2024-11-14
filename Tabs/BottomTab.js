@@ -1,10 +1,8 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React from 'react';
 
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import LoginScreen from '../Screens/LoginScreen';
-import AdminProfileScreen from '../Screens/AdminProfileScreen';
+import AdminProfileScreen from '../Screens/AdminScreen';
 // import CommunicationScreen from '../Screens/CommunicationScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
 

@@ -1,31 +1,28 @@
 
-import React from 'react'
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import PreScreen from './Screens/PreScreen'
-import LoginScreen from './Screens/LoginScreen'
-import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import LoginScreen from './Screens/LoginScreen';
 
+import AdminProfileScreen from './Screens/AdminScreen';
 import RegisterScreen from './Screens/RegisterScreen';
-import AdminProfileScreen from './Screens/AdminProfileScreen';
 import BottomTab from './Tabs/BottomTab';
 
-import HomeScreen from './Screens/HomeScreen';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import DrawerContent from './Screens/DrawerContent';
-import Register2Screen from './Screens/Register2Screen';
-import Login2Screen from './Screens/Login2Screen';
-import AdminScreen from './Screens/AdminScreen';
-import ProfScreen from './Screens/ProfScreen';
 import EleveScreen from './Screens/EleveScreen';
+import AdminScreen from './Screens/GestionUser';
+import HomeScreen from './Screens/HomeScreen';
+import Login2Screen from './Screens/Login2Screen';
+import Register2Screen from './Screens/Register2Screen';
 
-import TeacherAssignmentScreen from './Screens/EspaceE';
 import AssignStudentsToClassScreen from './Screens/AjoutEleve';
+import TeacherAssignmentScreen from './Screens/EspaceE';
 import ProfesseurScreen from './Screens/ProfesseurScreen';
 import AssignAbsencesScreen from './Screens/absence';
 import CreateClassScreen from './Screens/ajoutclasse';
 import ManageAbsencesScreen from './Screens/gererA';
+import ParentHomeScreen from './Screens/ParentScreen';
 
 
 
@@ -140,7 +137,7 @@ function App  () {
             backgroundColor: '#0163d2',
           },
           headerTintColor: '#fff',
-          headerTitleAlign: 'center',}} name="AdminScreen" component={AdminScreen}/>       
+          headerTitleAlign: 'center',}} name="Gestion des Utilisateurs" component={AdminScreen}/>       
         
      
 
@@ -150,17 +147,28 @@ function App  () {
             {/* <Stack.Screen options={{headerShown: true}} name="LoginScreen" component={LoginScreen}/>      */}
             {/* <Stack.Screen options={{headerShown: false}} name="ACC" component={ConnectAcceptScreen}/>    */}
                 <Stack.Screen options={{headerShown: true}} name="Profil" component={HomeScreen}/>      
-               <Stack.Screen options={{headerShown: true}} name="Professeur" component={ProfesseurScreen}/>        
+               <Stack.Screen options={{headerShown: true}} name="Professeur" component={ProfesseurScreen}/>   
+                    
              
 
            <Stack.Screen  options={{statusBarColor: '#0163d2',
           headerShown: true,
           headerBackVisible:true,
           headerStyle: {
-            backgroundColor: 'black',
+            backgroundColor: '#0163d2',
           },
           headerTintColor: '#fff',
           headerTitleAlign: 'center',}}  name="Dashboard" component={AdminProfileScreen}/>
+
+
+<Stack.Screen  options={{statusBarColor: '#0163d2',
+          headerShown: true,
+          headerBackVisible:true,
+          headerStyle: {
+            backgroundColor: '#0163d2',
+          },
+          headerTintColor: '#fff',
+          headerTitleAlign: 'center',}}  name="Dashboard Parent" component={ParentHomeScreen}/>
          
            <Stack.Screen options={{headerShown: false}}  name="tab" component={BottomTab}/> 
            <Stack.Screen options={{headerShown: false}}  name="el" component={EleveScreen}/>   

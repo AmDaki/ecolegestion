@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
+
 import { View, ScrollView, Text, StyleSheet, TouchableOpacity, Animated, Image } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
+
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
+
 import axios from 'axios';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EleveAccueilScreen = () => {

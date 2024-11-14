@@ -2,66 +2,71 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  Image,
   TextInput,
   TouchableOpacity,
   ScrollView,
   Alert,
+  Image
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from './style';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env'; // Importer API_URL depuis le fichier .env
+import { API_URL } from '@env'; // Import API_URL depuis le fichier .env
 
 function Login2Screen() {
   const navigation = useNavigation();
   const [identifiant, setIdentifiant] = useState('');
   const [password, setPassword] = useState('');
+const handleSubmit = async () => {
+  if (!API_URL) {
+    console.error("API_URL is not defined");
+    Alert.alert("Configuration Error", "API URL is not defined.");
+    return;
+  }
 
-  const handleSubmit = async () => {
-    const userData = {
-      identifiant,
-      password,
-    };
-  
-    try {
-      const res = await axios.post(`${API_URL}/login-user`, userData); // Utiliser API_URL ici
-      console.log(res.data); 
-      if (res.data.status === 'ok') {
-        Alert.alert('Connexion Réussie !!');
-        await AsyncStorage.setItem('token', res.data.data);
-        await AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
-  
-        if (res.data.userType) {
-          await AsyncStorage.setItem('userType', res.data.userType);
-          
-          if (res.data.userType === "Admin") {
-            navigation.navigate('Dashboard');
-          } else if (res.data.userType === "Professeur") {
-            navigation.navigate('Professeur');
-          } else if (res.data.userType === "Eleve") {
-            navigation.navigate('el');
-          } else if (res.data.userType === "Parent") {
-            navigation.navigate('Parent');
-          } else if (res.data.userType === "Surveillant") {
-            navigation.navigate('Surveillant');
-          } else {
-            console.error("userType inconnu");
-          }
+  const userData = {
+    identifiant,
+    password,
+  };
+  console.log('API_URL:', API_URL);
+  try {
+    const res = await axios.post(`${API_URL}/login-user`, userData); // Utilise API_URL ici
+    console.log(res.data); 
+    if (res.data.status === 'ok') {
+      Alert.alert('Connexion Réussie !!');
+      await AsyncStorage.setItem('token', res.data.data);
+      await AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
+
+      if (res.data.userType) {
+        await AsyncStorage.setItem('userType', res.data.userType);
+        
+        if (res.data.userType === "Admin") {
+          navigation.navigate('Dashboard');
+        } else if (res.data.userType === "Professeur") {
+          navigation.navigate('Professeur');
+        } else if (res.data.userType === "Eleve") {
+          navigation.navigate('el');
+        } else if (res.data.userType === "Parent") {
+          navigation.navigate('Dashboard Parent');
+        } else if (res.data.userType === "Surveillant") {
+          navigation.navigate('Surveillant');
         } else {
-          console.error("userType is undefined or null");
+          console.error("userType inconnu");
         }
       } else {
-        Alert.alert('Erreur de connexion', res.data.data || 'Une erreur est survenue.');
+        console.error("userType is undefined or null");
       }
-    } catch (error) {
-      console.error("Error during login:", error);
-      Alert.alert('Erreur de connexion', 'Impossible de se connecter. Vérifiez vos informations.');
+    } else {
+      Alert.alert('Erreur de connexion', res.data.data || 'Une erreur est survenue.');
     }
-  };
-  
+  } catch (error) {
+    console.error("Error during login:", error);
+    Alert.alert('Erreur de connexion', 'Impossible de se connecter. Vérifiez vos informations.');
+  }
+};
+
 
   const getData = async () => {
     const data = await AsyncStorage.getItem('isLoggedIn');
@@ -77,12 +82,13 @@ function Login2Screen() {
       contentContainerStyle={{ flexGrow: 1 }}
       keyboardShouldPersistTaps={'always'}>
       <View style={{ backgroundColor: 'white' }}>
-        {/* <View style={styles.logoContainer}>
+              <View style={styles.logoContainer}>
           <Image
             style={styles.logo}
             source={require('../assets/signUp.png')}
           />
-        </View> */}
+        </View> 
+
         <View style={styles.loginContainer}>
           <Text style={styles.text_header}>Connectez Vous !!!</Text>
           <View style={styles.action}>
@@ -94,7 +100,7 @@ function Login2Screen() {
             <TextInput
               placeholder="ID ou Téléphone"
               style={styles.textInput}
-              onChange={e => setIdentifiant(e.nativeEvent.text)}
+              onChangeText={text => setIdentifiant(text)}
             />
           </View>
           <View style={styles.action}>
@@ -103,7 +109,7 @@ function Login2Screen() {
               placeholder="Mot de passe"
               secureTextEntry
               style={styles.textInput}
-              onChange={e => setPassword(e.nativeEvent.text)}
+              onChangeText={text => setPassword(text)}
             />
           </View>
           <View
