@@ -1,0 +1,133 @@
+Date : 2024-11-17 08:05:14
+Directory : c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion
+Total : 64 files,  22883 codes, 298 comments, 539 blanks, all 23720 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          7 |     18,780 |          0 |          6 |     18,786 |
+| JavaScript         |         32 |      3,488 |         86 |        330 |      3,904 |
+| JavaScript JSX     |          1 |        153 |         55 |         49 |        257 |
+| XML                |          6 |        100 |         26 |         15 |        141 |
+| Gradle             |          3 |         74 |         61 |         14 |        149 |
+| Objective-C        |          2 |         61 |          0 |         17 |         78 |
+| Kotlin             |          2 |         53 |          0 |         14 |         67 |
+| Markdown           |          1 |         49 |          0 |         31 |         80 |
+| Batch              |          1 |         41 |         30 |         22 |         93 |
+| Ruby               |          2 |         33 |          7 |         10 |         50 |
+| Objective-C++      |          1 |         22 |          2 |          8 |         32 |
+| Java Properties    |          2 |         13 |         26 |         11 |         50 |
+| TypeScript JSX     |          1 |          8 |          5 |          5 |         18 |
+| C++                |          1 |          4 |          0 |          3 |          7 |
+| JSON with Comments |          1 |          3 |          0 |          1 |          4 |
+| Properties         |          1 |          1 |          0 |          3 |          4 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                  | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                     |         64 |     22,883 |        298 |        539 |     23,720 |
+| . (Files)                                                                                                                             |         15 |     18,944 |         66 |        101 |     19,111 |
+| Authentification                                                                                                                      |          1 |         10 |          0 |          2 |         12 |
+| Custom                                                                                                                                |          4 |         56 |          0 |          8 |         64 |
+| Screens                                                                                                                               |         21 |      3,380 |         77 |        310 |      3,767 |
+| __tests__                                                                                                                             |          1 |          8 |          5 |          5 |         18 |
+| android                                                                                                                               |         14 |        264 |        142 |         75 |        481 |
+| android (Files)                                                                                                                       |          4 |         73 |         56 |         35 |        164 |
+| android\app                                                                                                                           |          9 |        184 |         86 |         39 |        309 |
+| android\app (Files)                                                                                                                   |          1 |         48 |         61 |         11 |        120 |
+| android\app\src                                                                                                                       |          8 |        136 |         25 |         28 |        189 |
+| android\app\src (Files)                                                                                                               |          1 |         29 |          0 |          0 |         29 |
+| android\app\src\debug                                                                                                                 |          1 |         10 |          0 |          4 |         14 |
+| android\app\src\main                                                                                                                  |          6 |         97 |         25 |         24 |        146 |
+| android\app\src\main (Files)                                                                                                          |          1 |         24 |          0 |          3 |         27 |
+| android\app\src\main\java                                                                                                             |          2 |         53 |          0 |         14 |         67 |
+| android\app\src\main\java\com                                                                                                         |          2 |         53 |          0 |         14 |         67 |
+| android\app\src\main\java\com\ecolegestion                                                                                            |          2 |         53 |          0 |         14 |         67 |
+| android\app\src\main\res                                                                                                              |          3 |         20 |         25 |          7 |         52 |
+| android\app\src\main\res\drawable                                                                                                     |          1 |         12 |         23 |          3 |         38 |
+| android\app\src\main\res\values                                                                                                       |          2 |          8 |          2 |          4 |         14 |
+| android\gradle                                                                                                                        |          1 |          7 |          0 |          1 |          8 |
+| android\gradle\wrapper                                                                                                                |          1 |          7 |          0 |          1 |          8 |
+| ios                                                                                                                                   |          8 |        221 |          8 |         38 |        267 |
+| ios (Files)                                                                                                                           |          1 |         29 |          5 |          7 |         41 |
+| ios\ecolegestion                                                                                                                      |          6 |        139 |          3 |         17 |        159 |
+| ios\ecolegestion (Files)                                                                                                              |          4 |         80 |          3 |         15 |         98 |
+| ios\ecolegestionTests                                                                                                                 |          1 |         53 |          0 |         14 |         67 |
+| ios\ecolegestion\Images.xcassets                                                                                                      |          2 |         59 |          0 |          2 |         61 |
+| ios\ecolegestion\Images.xcassets (Files)                                                                                              |          1 |          6 |          0 |          1 |          7 |
+| ios\ecolegestion\Images.xcassets\AppIcon.appiconset                                                                                   |          1 |         53 |          0 |          1 |         54 |
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                                              | language           | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\.env                                                              | Properties         |          1 |          0 |          3 |          4 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\.eslintrc.js                                                      | JavaScript         |          4 |          0 |          1 |          5 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\.prettierrc.js                                                    | JavaScript         |          7 |          0 |          1 |          8 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\.watchmanconfig                                                   | JSON               |          1 |          0 |          1 |          2 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\App.jsx                                                           | JavaScript JSX     |        153 |         55 |         49 |        257 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Authentification\Authcontext.js                                   | JavaScript         |         10 |          0 |          2 |         12 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Custom\Btn.js                                                     | JavaScript         |         21 |          0 |          3 |         24 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Custom\Btn1.js                                                    | JavaScript         |         21 |          0 |          3 |         24 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Custom\Field.js                                                   | JavaScript         |         12 |          0 |          2 |         14 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Custom\constants.js                                               | JavaScript         |          2 |          0 |          0 |          2 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Gemfile                                                           | Ruby               |          4 |          2 |          3 |          9 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\README.md                                                         | Markdown           |         49 |          0 |         31 |         80 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\AdminScreen.js                                            | JavaScript         |        242 |          0 |         13 |        255 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\AjoutEleve.js                                             | JavaScript         |        170 |          0 |         16 |        186 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\Background.js                                             | JavaScript         |         13 |          0 |          2 |         15 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\Background_AllScreen.js                                   | JavaScript         |         13 |          0 |          3 |         16 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\Backgroundlog.js                                          | JavaScript         |         13 |          0 |          2 |         15 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\DrawerContent.js                                          | JavaScript         |        136 |          3 |          4 |        143 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\DrawerNavigation.js                                       | JavaScript         |         29 |          0 |          4 |         33 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\EditUserScreen.js                                         | JavaScript         |         92 |          1 |         11 |        104 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\EleveScreen.js                                            | JavaScript         |        151 |          7 |         16 |        174 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\EmploiTemps.js                                            | JavaScript         |        133 |          1 |         10 |        144 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\EspaceE.js                                                | JavaScript         |        198 |          2 |         19 |        219 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\GestionUser.js                                            | JavaScript         |        288 |          7 |         43 |        338 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\Login2Screen.js                                           | JavaScript         |        126 |          0 |         16 |        142 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\ParentScreen.js                                           | JavaScript         |        204 |          0 |         15 |        219 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\ProfesseurScreen.js                                       | JavaScript         |        233 |          1 |         26 |        260 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\ProfileView.js                                            | JavaScript         |        406 |         15 |         29 |        450 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\Register2Screen.js                                        | JavaScript         |        350 |         30 |         34 |        414 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\absence.js                                                | JavaScript         |        147 |          3 |         14 |        164 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\ajoutclasse.js                                            | JavaScript         |        134 |          6 |         13 |        153 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\gererA.js                                                 | JavaScript         |        182 |          0 |         16 |        198 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\Screens\style.js                                                  | JavaScript         |        120 |          1 |          4 |        125 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\__tests__\App.test.tsx                                            | TypeScript JSX     |          8 |          5 |          5 |         18 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\build.gradle                                          | Gradle             |         48 |         61 |         11 |        120 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\src\debug\AndroidManifest.xml                         | XML                |         10 |          0 |          4 |         14 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\src\google-services.json                              | JSON               |         29 |          0 |          0 |         29 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\src\main\AndroidManifest.xml                          | XML                |         24 |          0 |          3 |         27 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\src\main\java\com\ecolegestion\MainActivity.kt        | Kotlin             |         18 |          0 |          5 |         23 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\src\main\java\com\ecolegestion\MainApplication.kt     | Kotlin             |         35 |          0 |          9 |         44 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\src\main\res\drawable\rn_edit_text_material.xml       | XML                |         12 |         23 |          3 |         38 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\src\main\res\values\strings.xml                       | XML                |          3 |          0 |          1 |          4 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\app\src\main\res\values\styles.xml                        | XML                |          5 |          2 |          3 |         10 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\build.gradle                                              | Gradle             |         20 |          0 |          2 |         22 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\gradle.properties                                         | Java Properties    |          6 |         26 |         10 |         42 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\gradle\wrapper\gradle-wrapper.properties                  | Java Properties    |          7 |          0 |          1 |          8 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\gradlew.bat                                               | Batch              |         41 |         30 |         22 |         93 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\android\settings.gradle                                           | Gradle             |          6 |          0 |          1 |          7 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\app.json                                                          | JSON               |          4 |          0 |          1 |          5 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\babel.config.js                                                   | JavaScript         |         21 |          0 |          1 |         22 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\index.js                                                          | JavaScript         |          4 |          3 |          3 |         10 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\ios\Podfile                                                       | Ruby               |         29 |          5 |          7 |         41 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\ios\ecolegestionTests\ecolegestionTests.m                         | Objective-C        |         53 |          0 |         14 |         67 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\ios\ecolegestion\AppDelegate.h                                    | C++                |          4 |          0 |          3 |          7 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\ios\ecolegestion\AppDelegate.mm                                   | Objective-C++      |         22 |          2 |          8 |         32 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\ios\ecolegestion\Images.xcassets\AppIcon.appiconset\Contents.json | JSON               |         53 |          0 |          1 |         54 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\ios\ecolegestion\Images.xcassets\Contents.json                    | JSON               |          6 |          0 |          1 |          7 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\ios\ecolegestion\LaunchScreen.storyboard                          | XML                |         46 |          1 |          1 |         48 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\ios\ecolegestion\main.m                                           | Objective-C        |          8 |          0 |          3 |         11 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\jest.config.js                                                    | JavaScript         |          3 |          0 |          1 |          4 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\metro.config.js                                                   | JavaScript         |          3 |          6 |          3 |         12 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\package-lock.json                                                 | JSON               |     18,621 |          0 |          1 |     18,622 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\package.json                                                      | JSON               |         66 |          0 |          1 |         67 |
+| c:\Users\Ouedraogo Khalil\Desktop\ALL FILES\APPMOBILES\ecolegestion\tsconfig.json                                                     | JSON with Comments |          3 |          0 |          1 |          4 |
+| Total                                                                                                                                 |                    |     22,883 |        298 |        539 |     23,720 |
++---------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

@@ -183,10 +183,10 @@ function App  () {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login2Screen' >
+      <Stack.Navigator  >
        
            <Stack.Screen options={{headerShown: false}} name="PL" component={Login2Screen}/>   
-        <Stack.Screen options={{headerShown: true}} name="PR" component={Register2Screen}/>     
+        <Stack.Screen options={{headerShown: true}} name="Enregistrement" component={Register2Screen}/>     
 
          <Stack.Screen options={{statusBarColor: '#0163d2',
           headerShown: true,
@@ -233,10 +233,10 @@ function App  () {
 
            <Stack.Screen options={{headerShown: false}}  name="el" component={EleveScreen}/>   
             <Stack.Screen options={{headerShown: false}}  name="pr" component={ProfesseurScreen}/>           
-            <Stack.Screen options={{headerShown: true}}  name="es" component={TeacherAssignmentScreen}/>    
+            <Stack.Screen options={{headerShown: true}}  name="Espace Professeur" component={TeacherAssignmentScreen}/>    
            <Stack.Screen options={{headerShown: true}}  name="esl" component={ AssignClassScreen}/>
            <Stack.Screen options={{headerShown: true}}  name="esk" component={ AssignAbsencesScreen}/>
-           <Stack.Screen options={{headerShown: true}}  name="esc" component={ CreateClassScreen}/>
+           <Stack.Screen options={{headerShown: false}}  name="esc" component={ CreateClassScreen}/>
            <Stack.Screen options={{headerShown: true}}  name="esq" component={ ManageAbsencesScreen}/>
  
 

@@ -11,6 +11,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { API_URL } from '@env';
 
 const EleveAccueilScreen = () => {
   const navigation = useNavigation();
@@ -30,7 +31,7 @@ const EleveAccueilScreen = () => {
   async function getData() {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await axios.post('http://192.168.1.69:5000/userdata', { token });
+      const res = await axios.post(`${API_URL}/userdata`, { token });
       setUserData(res.data.data);
     } catch (error) {
       console.error(error);

@@ -199,7 +199,7 @@ return (
     </TouchableOpacity>
   {/* Bouton pour ajouter un nouvel utilisateur */}
   <TouchableOpacity
-    onPress={() => navigation.navigate('PR')}
+    onPress={() => navigation.navigate('Enregistrement')}
     style={styles.addUserButton}
   >
     <Icon name="plus-circle" size={30} color="#4CAF50" />

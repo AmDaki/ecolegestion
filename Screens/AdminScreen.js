@@ -125,7 +125,7 @@ const AdminProfileScreen = () => {
           <MenuButton
             icon="account-tie"
             text="Attribution des classes aux Professeurs"
-            onPress={() => navigation.navigate("es")}
+            onPress={() => navigation.navigate("Espace Professeur")}
             style={{ marginRight: 10 }}
           />
           <MenuButton
