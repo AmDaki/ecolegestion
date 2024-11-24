@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Modal, FlatList, ScrollView } from 'react-native';
 import axios from 'axios';
 import { API_URL } from '@env'; // Import API_URL depuis le fichier .env
 
@@ -7,42 +7,52 @@ const CreateClassScreen = () => {
   const [className, setClassName] = useState('');
   const [classGrade, setClassGrade] = useState('');
   const [classCapacity, setClassCapacity] = useState('');
+  const [classes, setClasses] = useState([]); // Stockage des classes
+  const [modalVisible, setModalVisible] = useState(false); // Contrôle du modal
 
   const handleCreateClass = () => {
-    // Validation des champs
     if (!className || !classGrade || isNaN(classCapacity) || classCapacity <= 0) {
       Alert.alert('Erreur', 'Tous les champs doivent être remplis et la capacité doit être un nombre positif.');
       return;
     }
 
-    // Création de l'objet de données pour la classe
     const classData = {
-      nomClasse: className,       // Changement de 'name' à 'nomClasse'
-      niveau: classGrade,         // Changement de 'grade' à 'niveau'
-      capacite: parseInt(classCapacity),    // Conversion de 'capacity' en nombre
+      nomClasse: className,
+      niveau: classGrade,
+      capacite: parseInt(classCapacity),
     };
 
-    // Envoi de la requête POST à l'API
     axios.post(`${API_URL}/registerClasse`, classData)
-    .then(response => {
-      console.log('Réponse de l\'API:', response); // Affiche la réponse complète de l'API
-      Alert.alert('Succès', 'Classe créée avec succès!');
-      setClassName('');
-      setClassGrade('');
-      setClassCapacity('');
-    })
-    .catch(error => {
-      // Gestion des erreurs détaillées
-      if (error.response) {
-        // Si la réponse d'erreur est reçue du serveur
-        console.error('Erreur réponse:', error.response.data);
-      } else {
-        // Si l'erreur provient d'une autre source (ex: réseau)
-        console.error('Erreur:', error.message);
-      }
-      Alert.alert('Erreur', 'Impossible de créer la classe.');
-    });
-  
+      .then(() => {
+        Alert.alert('Succès', 'Classe créée avec succès!');
+        setClassName('');
+        setClassGrade('');
+        setClassCapacity('');
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error('Erreur réponse:', error.response.data);
+        } else {
+          console.error('Erreur:', error.message);
+        }
+        Alert.alert('Erreur', 'Impossible de créer la classe.');
+      });
+  };
+
+  const fetchClasses = () => {
+    axios.get(`${API_URL}/get-all-classes`)
+      .then((response) => {
+        if (response.data.status === 'ok') {
+          setClasses(response.data.classes); // Stocke les classes
+          setModalVisible(true); // Ouvre le modal
+        } else {
+          Alert.alert('Erreur', response.data.message || 'Erreur inconnue');
+        }
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la récupération des classes:', error);
+        Alert.alert('Erreur', 'Impossible de récupérer les classes.');
+      });
   };
 
   return (
@@ -83,9 +93,46 @@ const CreateClassScreen = () => {
       <TouchableOpacity style={styles.createButton} onPress={handleCreateClass}>
         <Text style={styles.buttonText}>Créer la Classe</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.createButton} >
+
+      <TouchableOpacity style={styles.createButton} onPress={fetchClasses}>
         <Text style={styles.buttonText}>Liste des Classes créées</Text>
       </TouchableOpacity>
+
+      {/* Modal pour afficher la liste des classes */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Liste des Classes</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <FlatList
+                data={classes}
+                horizontal // Affichage horizontal
+                keyExtractor={(item) => `${item.nomClasse}-${item.niveau}-${item.capacite}`} // Utilisation d'une combinaison unique des champs
+                renderItem={({ item }) => (
+                  <View style={styles.classCard}>
+                    <View style={styles.cardDetails}>
+                      <Text style={styles.classText}>Nom : {item.nomClasse}</Text>
+                      <Text style={styles.classText}>Niveau : {item.niveau}</Text>
+                      <Text style={styles.classText}>Capacité : {item.capacite}</Text>
+                    </View>
+                  </View>
+                )}
+              />
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.buttonText}>Fermer</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -123,11 +170,6 @@ const styles = StyleSheet.create({
     borderColor: '#E1E8ED',
     borderWidth: 1,
     color: '#2A9D8F',
-    shadowColor: '#264653',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.5,
-    elevation: 3,
   },
   createButton: {
     backgroundColor: '#E76F51',
@@ -135,17 +177,58 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 30,
-    shadowColor: '#E76F51',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 5,
   },
   buttonText: {
     fontSize: 18,
     color: '#fff',
     fontWeight: '700',
     textTransform: 'uppercase',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#2A9D8F',
+  },
+  classCard: {
+    marginRight: 15, // Espacement entre les cartes
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
+    width: 250, // Largeur fixe des cartes
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+  cardDetails: {
+    alignItems: 'center',
+  },
+  classText: {
+    fontSize: 16,
+    color: '#264653',
+    textAlign: 'center',
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: '#E76F51',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
   },
 });
 

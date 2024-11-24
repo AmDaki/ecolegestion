@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 import { API_URL } from '@env'; // Import API_URL depuis le fichier .env
@@ -9,32 +9,36 @@ const TeacherAssignmentScreen = () => {
   const [classes, setClasses] = useState([]);
   const [selectedProfesseur, setSelectedProfesseur] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfesseursAndClasses = async () => {
+    const fetchData = async () => {
       try {
-        const professeursResponse = await axios.get(`${API_URL}/get-all-professeurs`);
-        const classesResponse = await axios.get(`${API_URL}/get-all-classes`);
+        setLoading(true); // Affiche le chargement
+        const [professeursResponse, classesResponse] = await Promise.all([
+          axios.get(`${API_URL}/get-all-professeurs`),
+          axios.get(`${API_URL}/get-all-classes`),
+        ]);
 
-        console.log("Professeurs:", professeursResponse.data.professeurs); // Afficher les professeurs reçus
-        console.log("Classes:", classesResponse.data.classes); // Afficher les classes reçues
+        setProfesseurs(professeursResponse.data.professeurs || []);
+        setClasses(classesResponse.data.classes || []);
 
-        // Vérification si les données sont valides avant de les enregistrer
-        if (professeursResponse.data.professeurs && professeursResponse.data.professeurs.length > 0) {
-          setProfesseurs(professeursResponse.data.professeurs);
-          setSelectedProfesseur(professeursResponse.data.professeurs[0].identifiant); // Sélectionner le premier professeur par défaut
+        // Pré-sélection automatique si des données sont disponibles
+        if (professeursResponse.data.professeurs?.length > 0) {
+          setSelectedProfesseur(professeursResponse.data.professeurs[0].identifiant);
         }
-
-        if (classesResponse.data.classes && classesResponse.data.classes.length > 0) {
-          setClasses(classesResponse.data.classes);
-          setSelectedClass(classesResponse.data.classes[0].nomClasse); // Sélectionner la première classe par défaut
+        if (classesResponse.data.classes?.length > 0) {
+          setSelectedClass(classesResponse.data.classes[0].nomClasse);
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération des professeurs et des classes:', error);
+        console.error('Erreur lors de la récupération des données :', error);
+        Alert.alert('Erreur', 'Impossible de charger les données. Veuillez réessayer.');
+      } finally {
+        setLoading(false); // Arrête le chargement
       }
     };
 
-    fetchProfesseursAndClasses();
+    fetchData();
   }, []);
 
   const handleAssignClass = async () => {
@@ -45,31 +49,41 @@ const TeacherAssignmentScreen = () => {
 
     try {
       const response = await axios.post(`${API_URL}/assign-class-to-professeur`, {
-        professeurIdentifiant: selectedProfesseur, // Utiliser professeurIdentifiant au lieu de professeurId
-        nomClasse: selectedClass, // Utiliser nomClasse au lieu de classId
+        professeurIdentifiant: selectedProfesseur,
+        nomClasse: selectedClass,
       });
-      
 
       if (response.data.status === 'ok') {
         Alert.alert('Succès', 'Classe attribuée avec succès !');
+      } else if (response.data.error === 'DuplicateAssignment') {
+        Alert.alert('Erreur', 'Ce professeur est déjà assigné à cette classe.');
       } else {
         Alert.alert('Erreur', 'Une erreur est survenue lors de l\'attribution.');
       }
     } catch (error) {
-      console.error('Erreur lors de l\'attribution de la classe:', error);
+      console.error('Erreur lors de l\'attribution de la classe :', error);
       Alert.alert('Erreur', 'Impossible d\'attribuer la classe.');
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6200ee" />
+        <Text>Chargement des données...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Espace Professeur</Text>
       </View>
-      
+
       <View style={styles.statsCard}>
-        <Text style={styles.statsText}>Professeurs disponibles : {professeurs ? professeurs.length : 0}</Text>
-        <Text style={styles.statsText}>Classes disponibles : {classes ? classes.length : 0}</Text>
+        <Text style={styles.statsText}>Professeurs disponibles : {professeurs.length}</Text>
+        <Text style={styles.statsText}>Classes disponibles : {classes.length}</Text>
       </View>
 
       <View style={styles.formGroup}>
@@ -81,18 +95,13 @@ const TeacherAssignmentScreen = () => {
             style={styles.picker}
           >
             <Picker.Item label="-- Choisissez un professeur --" value="" />
-            {professeurs && professeurs.length > 0 ? (
-              professeurs.map(professeur => (
-                <Picker.Item 
-    key={professeur.identifiant} 
-    label={professeur.label}  // Utilise le champ 'label' pour afficher nom + prénom
-    value={professeur.identifiant} 
-/>
-
-              ))
-            ) : (
-              <Picker.Item label="Aucun professeur disponible" value="" />
-            )}
+            {professeurs.map(professeur => (
+              <Picker.Item
+                key={professeur.identifiant}
+                label={professeur.label} // Afficher nom + prénom
+                value={professeur.identifiant}
+              />
+            ))}
           </Picker>
         </View>
       </View>
@@ -106,18 +115,21 @@ const TeacherAssignmentScreen = () => {
             style={styles.picker}
           >
             <Picker.Item label="-- Choisissez une classe --" value="" />
-            {classes && classes.length > 0 ? (
-              classes.map(cls => (
-                <Picker.Item key={cls.nomClasse} label={cls.nomClasse} value={cls.nomClasse} />
-              ))
-            ) : (
-              <Picker.Item label="Aucune classe disponible" value="" />
-            )}
+            {classes.map(classe => (
+              <Picker.Item key={classe.nomClasse} label={classe.nomClasse} value={classe.nomClasse} />
+            ))}
           </Picker>
         </View>
       </View>
 
-      <TouchableOpacity style={styles.assignButton} onPress={handleAssignClass}>
+      <TouchableOpacity
+        style={[
+          styles.assignButton,
+          (!selectedProfesseur || !selectedClass) && { backgroundColor: '#ccc' },
+        ]}
+        onPress={handleAssignClass}
+        disabled={!selectedProfesseur || !selectedClass}
+      >
         <Text style={styles.assignButtonText}>Attribuer la Classe</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -212,6 +224,11 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

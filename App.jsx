@@ -118,6 +118,7 @@ const Tab = createMaterialBottomTabNavigator();
 
 const TabNav = () => {
   return (
+    <NavigationContainer>
     <Tab.Navigator
       initialRouteName="Home"
       activeColor="#fff"
@@ -165,6 +166,7 @@ const TabNav = () => {
         }}
       />
     </Tab.Navigator>
+    </NavigationContainer>
   );
 };
 
@@ -211,11 +213,11 @@ function App  () {
                     
              
 
-           <Stack.Screen  options={{statusBarColor: '#0163d2',
-          headerShown: true,
+           <Stack.Screen  options={{statusBarColor: 'green',
+          headerShown: false,
           headerBackVisible:true,
           headerStyle: {
-            backgroundColor: '#0163d2',
+            backgroundColor: 'green',
           },
           headerTintColor: '#fff',
           headerTitleAlign: 'center',}}  name="Dashboard" component={AdminProfileScreen}/>

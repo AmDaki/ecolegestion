@@ -1,20 +1,18 @@
 import { NetworkInfo } from 'react-native-network-info';
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import axios from 'axios';
-import { ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
-import Backgroundall from './Background_AllScreen';
-import { Dimensions } from 'react-native';
 import { Card } from 'react-native-paper';
-import { LineChart,BarChart } from 'react-native-chart-kit';
-import { VictoryPie } from 'victory-native';
-import { API_URL } from '@env'; 
+import { API_URL } from '@env';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import ProfileScreen from './ProfileView';
+import ScheduleScreen from'./EmploiTemps'
 
-const API_PORT = '5000';
-
+// Déclaration des données pour le graphique
 const chartData = {
   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
   datasets: [
@@ -30,8 +28,6 @@ const pieData = [
 ];
 
 const screenWidth = Dimensions.get("window").width;
-
-const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
 const AdminProfileScreen = () => {
   const [userData, setUserData] = useState({});
@@ -52,17 +48,11 @@ const AdminProfileScreen = () => {
     fetchData();
   }, []);
 
-  const UserCard = ({ data }) => (
-    <View style={styles.card}>
-      <View style={styles.cardDetails}>
-        <Text style={styles.name}>{data.nom}</Text>
-        <Text style={styles.email}>{data.prenom}</Text>
-        <Text style={styles.userType}>{data.userType}</Text>
-      </View>
-      <TouchableOpacity onPress={() => deleteUser(data)}>
-        <MaterialCommunityIcons name="delete" size={30} color="red" />
-      </TouchableOpacity>
-    </View>
+  const MenuButton = ({ icon, text, onPress, style }) => (
+    <TouchableOpacity style={[styles.menuButton, style]} onPress={onPress}>
+      <MaterialCommunityIcons name={icon} size={60} color="black" />
+      <Text style={styles.menuText}>{text}</Text>
+    </TouchableOpacity>
   );
 
   if (loading) {
@@ -74,6 +64,7 @@ const AdminProfileScreen = () => {
   }
 
   return (
+    <View style={styles.mainContainer}>
     <ScrollView contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps={'always'} style={styles.contain}>
       <TouchableOpacity onPress={() => navigation.navigate("Profil")}>
         <View style={styles.profileCard}>
@@ -132,34 +123,71 @@ const AdminProfileScreen = () => {
             icon="account-tie"
             text="Attribution des classes aux Eleves"
             onPress={() => navigation.navigate("esl")}
-            style={{ }}
           />
           <MenuButton
             icon="account-tie"
             text="Creer des Classes"
             onPress={() => navigation.navigate("esc")}
-            style={{ }}
           />
           <MenuButton
             icon="message-processing"
             text="Communication avec Parent"
             onPress={() => {}}
-            style={{ }}
           />
         </View>
       </View>
+      
     </ScrollView>
+    <View style={styles.tabNavContainer}>
+        <TabNav />
+      </View>
+    </View>
   );
 };
 
-const MenuButton = ({ icon, text, onPress, style }) => (
-  <TouchableOpacity style={[styles.menuButton, style]} onPress={onPress}>
-    <MaterialCommunityIcons name={icon} size={60} color="black" />
-    <Text style={styles.menuText}>{text}</Text>
-  </TouchableOpacity>
-);
+const Tab = createMaterialBottomTabNavigator();
+
+const TabNav = () => {
+  return (
+    
+      <Tab.Navigator
+        activeColor="black"
+        shifting={true}
+        barStyle={{ backgroundColor: 'green' }}
+      >
+       
+    <Tab.Screen 
+          name="ProfileScreen" 
+          component={ProfileScreen} 
+          options={{
+            tabBarLabel: 'Accueil',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="account" color={color} size={26} />
+            ),
+          }}
+        />
+
+        <Tab.Screen 
+          name="Schedule" 
+          component={ScheduleScreen} 
+          options={{
+            tabBarLabel: 'Emploi du Temps',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="calendar" color={color} size={26} />
+            ),
+          }}
+        />
+        
+      </Tab.Navigator>
+    
+  );
+};
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#E8F5E9',
+  },
   contain: {
     backgroundColor: '#E8F5E9',
   },
@@ -200,7 +228,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginHorizontal: 20,
-    marginTop: 50
+    marginTop: 50,
   },
   menuButton: {
     backgroundColor: '#fff',
@@ -221,35 +249,20 @@ const styles = StyleSheet.create({
     color: '#333',
     marginTop: 10,
   },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 10,
-    marginHorizontal: 20,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  email: {
-    fontSize: 14,
-    color: '#666',
-  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cardBox: {
-    margin: 10
+  tabNavContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    backgroundColor: '#0163d2',
   },
-  img: {
-    padding: 10
-  }
 });
 
 export default AdminProfileScreen;

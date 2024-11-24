@@ -29,7 +29,7 @@ import {
   import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
   import { API_URL } from '@env'; 
   
-  function HomeScreen(props) {
+  function ProfileScreen(props) {
     const navigation = useNavigation();
     console.log(props);
     const [userData, setUserData] = useState('');
@@ -447,4 +447,4 @@ import {
       fontWeight: '600',
     },
   });
-  export default HomeScreen;
+  export default ProfileScreen;

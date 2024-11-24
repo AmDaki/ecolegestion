@@ -82,6 +82,7 @@ const handleSubmit = async () => {
   }, []);
 
   return (
+    <View style={styles.mainContainer}>
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       keyboardShouldPersistTaps={'always'}>
@@ -91,6 +92,7 @@ const handleSubmit = async () => {
             style={styles.logo}
             source={require('../assets/signUp.png')}
           />
+         
         </View> 
 
         <View style={styles.loginContainer}>
@@ -135,6 +137,7 @@ const handleSubmit = async () => {
         </View>
       </View>
     </ScrollView>
+    </View>
   );
 }
 

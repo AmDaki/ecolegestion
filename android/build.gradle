@@ -1,21 +1,45 @@
 buildscript {
     ext {
-        buildToolsVersion = "34.0.0"
-        minSdkVersion = 23
-        compileSdkVersion = 34
+        buildToolsVersion = "34.0.0"       // Correspond à la version SDK installée
+        minSdkVersion = 23                // Assurez-vous que toutes les bibliothèques supportent cette version
+        compileSdkVersion = 34            // Aligné avec targetSdkVersion
         targetSdkVersion = 34
-        ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.24"
+        ndkVersion = "26.1.10909125"      // Vérifiez que cette version est bien installée
+        kotlinVersion = "1.9.24"          // Version Kotlin compatible
     }
+
     repositories {
         google()
         mavenCentral()
+        jcenter() // Deprecated, ne l'utilisez que si nécessaire
     }
+
     dependencies {
-        classpath("com.android.tools.build:gradle")
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        // Plugin Android Gradle
+        classpath("com.android.tools.build:gradle:8.1.0") // Mettez la version selon votre configuration
+
+        // Plugin React Native Gradle
+        classpath("com.facebook.react:react-native-gradle-plugin:0.72.4") // Version alignée avec React Native
+
+        // Plugin Kotlin
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
+// Applique le plugin principal pour React Native
 apply plugin: "com.facebook.react.rootproject"
+
+// Configuration des dépôts pour les sous-projets
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        // Ajoutez ceci si certains modules natifs utilisent encore JCenter
+        jcenter() // Attention : bientôt obsolète
+    }
+}
+
+// Gestion des tâches pour s'assurer que le cache est propre lors de la construction
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
