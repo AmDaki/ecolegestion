@@ -48,23 +48,25 @@ const TeacherAssignmentScreen = () => {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/assign-class-to-professeur`, {
+      const response = await axios.put(`${API_URL}/assign-class-to-professeur`, {
         professeurIdentifiant: selectedProfesseur,
         nomClasse: selectedClass,
       });
 
       if (response.data.status === 'ok') {
         Alert.alert('Succès', 'Classe attribuée avec succès !');
+        setSelectedProfesseur('');
+        setSelectedClass('');
       } else if (response.data.error === 'DuplicateAssignment') {
         Alert.alert('Erreur', 'Ce professeur est déjà assigné à cette classe.');
       } else {
-        Alert.alert('Erreur', 'Une erreur est survenue lors de l\'attribution.');
+        Alert.alert('Erreur', `Une erreur est survenue: ${response.data.error || 'Erreur inconnue.'}`);
       }
     } catch (error) {
       console.error('Erreur lors de l\'attribution de la classe :', error);
-      Alert.alert('Erreur', 'Impossible d\'attribuer la classe.');
+      Alert.alert('Erreur', `Impossible d\'attribuer la classe: ${error.message}`);
     }
-  };
+};
 
   if (loading) {
     return (

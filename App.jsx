@@ -22,7 +22,7 @@ import TeacherAssignmentScreen from './Screens/EspaceE';
 import ProfesseurScreen from './Screens/ProfesseurScreen';
 import AssignAbsencesScreen from './Screens/absence';
 import CreateClassScreen from './Screens/ajoutclasse';
-import ManageAbsencesScreen from './Screens/gererA';
+import ManageAbsencesScreen from './Screens/absence';
 import ParentHomeScreen from './Screens/ParentScreen';
 import HomeScreen from './Screens/ProfileView';
 import EditUserScreen from './Screens/EditUserScreen';

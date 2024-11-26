@@ -118,7 +118,7 @@ const ProfesseurScreen = () => {
             <Button
               mode="contained"
               icon="check-circle"
-              onPress={() => navigation.navigate('esk')}
+              onPress={() => navigation.navigate('esq')}
               style={styles.actionButton}
             >
               Prendre la présence

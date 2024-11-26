@@ -1,118 +1,169 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { API_URL } from '@env';
+import MultiSelect from 'react-native-multiple-select';
 import { Picker } from '@react-native-picker/picker';
 
 const AssignClassScreen = () => {
-  const [selectedLevel, setSelectedLevel] = useState('');
+  const [selectedLevel, setSelectedLevel] = useState(null); // Pas de sélection par défaut
   const [availableClasses, setAvailableClasses] = useState([]);
-  const [selectedClass, setSelectedClass] = useState('');
-  const [availableStudents, setAvailableStudents] = useState([]);
-  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [selectedClass, setSelectedClass] = useState(null); // Pas de sélection par défaut
+  const [students, setStudents] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]); // Contiendra les identifiants des élèves
+  const [loadingClasses, setLoadingClasses] = useState(false);
+  const [loadingStudents, setLoadingStudents] = useState(false);
 
-  const levels = ['6ème', '5ème', '4ème', '3ème', '2nde', '1ère', 'Terminale'];
+  // Liste des niveaux disponibles
+  const levels = ['6eme', '5eme', '4eme', '3eme', '2nde', '1ère', 'Terminale'];
 
+  // Charger les classes et élèves en fonction du niveau sélectionné
   useEffect(() => {
     if (selectedLevel) {
-      axios.get(`${API_URL}/get-all-classes?niveau=${selectedLevel}`)
-        .then(response => setAvailableClasses(response.data || []))
-        .catch(error => console.error('Erreur chargement des classes:', error));
+      setLoadingClasses(true);
+      axios
+        .get(`${API_URL}/get-classes-by-niveau?niveau=${selectedLevel}`)
+        .then((response) => {
+          setLoadingClasses(false);
+          if (Array.isArray(response.data)) {
+            setAvailableClasses(response.data);
+          } else {
+            setAvailableClasses([]);
+          }
+        })
+        .catch(() => {
+          setLoadingClasses(false);
+          Alert.alert('Erreur', 'Impossible de charger les classes.');
+        });
+
+      setLoadingStudents(true);
+      axios
+        .get(`${API_URL}/get-eleves-by-niveau?niveau=${selectedLevel}`)
+        .then((response) => {
+          setLoadingStudents(false);
+          if (response.data.status === 'ok' && Array.isArray(response.data.eleves)) {
+            setStudents(response.data.eleves);
+          } else {
+            setStudents([]);
+          }
+        })
+        .catch(() => {
+          setLoadingStudents(false);
+          Alert.alert('Erreur', 'Impossible de charger les élèves.');
+        });
+    } else {
+      setAvailableClasses([]);
+      setStudents([]);
     }
   }, [selectedLevel]);
 
-  useEffect(() => {
-    if (selectedLevel) {
-      axios.get(`${API_URL}/get-eleves-by-niveau?NiveauClasse=${selectedLevel}`)
-        .then(response => setAvailableStudents(response.data.eleves || []))
-        .catch(error => console.error('Erreur chargement des élèves:', error));
-    }
-  }, [selectedLevel]);
-
-  const handleAssignClass = () => {
+  const handleAssign = () => {
     if (!selectedLevel || !selectedClass || selectedStudents.length === 0) {
-      Alert.alert('Erreur', 'Veuillez sélectionner un niveau, une classe, et au moins un élève.');
-      return;
+        Alert.alert('Erreur', 'Veuillez sélectionner un niveau, une classe et des élèves.');
+        return;
     }
 
     const assignmentData = {
-      level: selectedLevel,
-      classId: selectedClass,
-      studentIds: selectedStudents,
+        classeNom: selectedClass,
+        identifiants: selectedStudents, // Tableau des identifiants des élèves sélectionnés
     };
 
-    axios.post(`${API_URL}/assign-class-to-eleves`, assignmentData)
-      .then(() => Alert.alert('Succès', 'Classe attribuée avec succès!'))
-      .catch(error => Alert.alert('Erreur', 'Impossible d\'attribuer la classe.'));
-  };
+    axios
+        .put(`${API_URL}/assign-classe`, assignmentData)
+        .then((response) => {
+            Alert.alert('Succès', 'Classes attribuées avec succès!');
+        })
+        .catch((error) => {
+            Alert.alert('Erreur', 'Impossible d\'attribuer les classes.');
+        });
+};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Attribuer Classe aux Élèves</Text>
+      <Text style={styles.title}>Attribuer une Classe aux Élèves</Text>
 
-      <Text style={styles.label}>Niveau :</Text>
+      {/* Sélection du Niveau */}
+      <Text style={styles.label}>Sélectionner un Niveau :</Text>
       <Picker
         selectedValue={selectedLevel}
-        onValueChange={setSelectedLevel}
-        style={styles.picker}>
-        <Picker.Item label="Sélectionner le niveau" value="" />
-        {levels.map(level => (
+        onValueChange={(value) => {
+          setSelectedLevel(value);
+          setSelectedClass(null); // Réinitialiser la classe
+          setSelectedStudents([]); // Réinitialiser les élèves
+        }}
+        style={styles.picker}
+      >
+        <Picker.Item label="-- Sélectionner un niveau --" value={null} />
+        {levels.map((level) => (
           <Picker.Item key={level} label={level} value={level} />
         ))}
       </Picker>
 
+      {/* Sélection de la Classe */}
       {selectedLevel && (
         <>
-          <Text style={styles.label}>Classe :</Text>
-          <Picker
-            selectedValue={selectedClass}
-            onValueChange={setSelectedClass}
-            style={styles.picker}>
-
-            <Picker.Item label="Sélectionner une classe" value="" />
-            {selectedClass.length > 0 ? (
-              selectedClass.map(cls => (
-                <Picker.Item key={cls.nomClasse} label={cls.nomClasse} value={cls.nomClasse} />
-              ))
-            ) : (
-              <Picker.Item label="Aucune classe disponible" value="" />
-            )}
-          </Picker>
+          <Text style={styles.label}>Sélectionner une Classe :</Text>
+          {loadingClasses ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Picker
+              selectedValue={selectedClass} // L'état ici est lié à nomClasse
+              onValueChange={(value) => {
+                setSelectedClass(value); // Mise à jour avec le nom de la classe
+              }}
+              style={styles.picker}
+            >
+              <Picker.Item label="-- Sélectionner une classe --" value={null} />
+              {availableClasses.length > 0 ? (
+                availableClasses.map((cls) => (
+                  <Picker.Item key={cls.nomClasse} label={cls.nomClasse || 'Classe inconnue'} value={cls.nomClasse || null} />
+                ))
+              ) : (
+                <Picker.Item label="Aucune classe disponible" value={null} />
+              )}
+            </Picker>
+          )}
         </>
       )}
 
+      {/* Sélection des Élèves */}
       {selectedLevel && (
         <>
-          <Text style={styles.label}>Élèves :</Text>
-          <View style={styles.studentsList}>
-            {availableStudents.length > 0 ? (
-              availableStudents.map((student) => (
-                <TouchableOpacity
-                  key={student._id}
-                  style={[
-                    styles.studentItem,
-                    selectedStudents.includes(student._id) && styles.selectedStudent
-                  ]}
-                  onPress={() => {
-                    if (selectedStudents.includes(student._id)) {
-                      setSelectedStudents(selectedStudents.filter(id => id !== student._id));
-                    } else {
-                      setSelectedStudents([...selectedStudents, student._id]);
-                    }
-                  }}>
-                  <Text style={styles.studentText}>{`${student.nom} ${student.prenom}`}</Text>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <Text style={styles.noStudentsText}>Aucun élève trouvé.</Text>
-            )}
-          </View>
+          <Text style={styles.label}>Sélectionner des Élèves :</Text>
+          {loadingStudents ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <MultiSelect
+              items={students.map((student) => ({
+                id: student.identifiant, // Utiliser identifiant pour les élèves
+                name: `${student.prenom} ${student.nom}`,
+              }))}
+              uniqueKey="id"
+              onSelectedItemsChange={setSelectedStudents} // Mettre à jour les identifiants des élèves sélectionnés
+              selectedItems={selectedStudents}
+              selectText="Sélectionner des élèves"
+              searchInputPlaceholderText="Rechercher des élèves"
+              tagRemoveIconColor="#d5d5d5"
+              tagBorderColor="#d5d5d5"
+              tagTextColor="#d5d5d5"
+              selectedItemTextColor="#CCC"
+              selectedItemIconColor="#CCC"
+              itemTextColor="#000"
+              displayKey="name"
+              searchInputStyle={{ color: '#CCC' }}
+              submitButtonColor="#48D1CC"
+              submitButtonText="Valider"
+            />
+          )}
         </>
       )}
 
-      <TouchableOpacity style={styles.assignButton} onPress={handleAssignClass}>
-        <Text style={styles.buttonText}>Attribuer la Classe</Text>
-      </TouchableOpacity>
+      {/* Bouton d'attribution */}
+      {selectedLevel && selectedClass && selectedStudents.length > 0 && (
+        <TouchableOpacity style={styles.assignButton} onPress={handleAssign}>
+          <Text style={styles.buttonText}>Attribuer</Text>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 };
@@ -121,57 +172,33 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#F5F5F5',
   },
   title: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
     textAlign: 'center',
     marginBottom: 20,
+    color: '#333',
   },
   label: {
     fontSize: 16,
+    marginBottom: 10,
     color: '#555',
-    marginBottom: 5,
   },
   picker: {
     backgroundColor: '#FFF',
     borderRadius: 8,
-    borderColor: '#DDD',
     borderWidth: 1,
+    borderColor: '#DDD',
     paddingHorizontal: 10,
-    color: '#555',
-    marginBottom: 20,
-  },
-  studentsList: {
-    marginBottom: 20,
-  },
-  studentItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#EFEFEF',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  selectedStudent: {
-    backgroundColor: '#C3E0F7',
-  },
-  studentText: {
-    fontSize: 16,
     color: '#333',
-  },
-  noStudentsText: {
-    fontSize: 16,
-    color: '#AAA',
-    textAlign: 'center',
-    marginTop: 10,
+    marginBottom: 20,
   },
   assignButton: {
-    backgroundColor: '#1E90FF',
+    backgroundColor: '#4CAF50',
     paddingVertical: 15,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: 'center',
     marginTop: 20,
   },

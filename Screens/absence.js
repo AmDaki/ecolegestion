@@ -1,163 +1,209 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import CheckBox from '@react-native-community/checkbox';
 import axios from 'axios';
+import { API_URL } from '@env';
 
-const AssignAbsencesScreen = () => {
+const ManageAbsencesScreen = () => {
   const [classes, setClasses] = useState([]);
+  const [selectedClass, setSelectedClass] = useState('');
   const [students, setStudents] = useState([]);
-  const [selectedClass, setSelectedClass] = useState(null);
-  const [absentStudents, setAbsentStudents] = useState([]);
+  const [attendance, setAttendance] = useState({});
+  const [loadingClasses, setLoadingClasses] = useState(false);
+  const [loadingStudents, setLoadingStudents] = useState(false);
 
   useEffect(() => {
-    // Fetch classes
-    axios.get('http://your-server-url/get-classes')
-      .then(response => {
+    // Charger les classes du professeur
+    setLoadingClasses(true);
+    axios
+      .get(`${API_URL}/get-classes-for-professor`)
+      .then((response) => {
+        setLoadingClasses(false);
         setClasses(response.data);
       })
-      .catch(error => {
-        console.error(error);
+      .catch((error) => {
+        setLoadingClasses(false);
+        Alert.alert('Erreur', 'Impossible de charger les classes.');
+        console.error('Erreur:', error);
       });
   }, []);
 
-  // Fetch students of the selected class
-  const fetchStudents = (classId) => {
-    axios.get(`http://your-server-url/get-students/${classId}`)
-      .then(response => {
+  const loadStudents = (classId) => {
+    setLoadingStudents(true);
+    axios
+      .get(`${API_URL}/get-students-by-class?classId=${classId}`)
+      .then((response) => {
+        setLoadingStudents(false);
         setStudents(response.data);
+        // Initialiser les absences
+        const initialAttendance = {};
+        response.data.forEach((student) => {
+          initialAttendance[student.id] = true; // Par défaut, tous les élèves sont présents
+        });
+        setAttendance(initialAttendance);
       })
-      .catch(error => {
-        console.error(error);
+      .catch((error) => {
+        setLoadingStudents(false);
+        Alert.alert('Erreur', 'Impossible de charger les élèves.');
+        console.error('Erreur:', error);
       });
   };
 
-  const handleClassSelection = (classId) => {
-    setSelectedClass(classId);
-    fetchStudents(classId);
+  const toggleAttendance = (studentId) => {
+    setAttendance((prev) => ({
+      ...prev,
+      [studentId]: !prev[studentId],
+    }));
   };
 
-  const handleStudentSelection = (studentId) => {
-    if (absentStudents.includes(studentId)) {
-      setAbsentStudents(absentStudents.filter(id => id !== studentId));
-    } else {
-      setAbsentStudents([...absentStudents, studentId]);
-    }
-  };
-
-  const handleSubmitAbsences = () => {
+  const saveAttendance = () => {
     if (!selectedClass) {
       Alert.alert('Erreur', 'Veuillez sélectionner une classe.');
       return;
     }
 
-    axios.post('http://your-server-url/submit-absences', {
+    const absenceData = {
       classId: selectedClass,
-      absences: absentStudents
-    })
-    .then(() => {
-      Alert.alert('Succès', 'Les absences ont été enregistrées avec succès.');
-      setAbsentStudents([]); // Reset after submission
-    })
-    .catch(error => {
-      console.error(error);
-      Alert.alert('Erreur', 'Une erreur est survenue lors de la soumission des absences.');
-    });
+      attendance,
+    };
+
+    axios
+      .post(`${API_URL}/save-attendance`, absenceData)
+      .then(() => {
+        Alert.alert('Succès', 'Les absences ont été enregistrées.');
+      })
+      .catch((error) => {
+        Alert.alert('Erreur', 'Impossible d\'enregistrer les absences.');
+        console.error('Erreur:', error);
+      });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Gérer les Absences</Text>
+      <Text style={styles.title}>Gestion des Absences</Text>
 
+      {/* Sélection de la classe */}
       <Text style={styles.label}>Sélectionner une classe :</Text>
-      <View style={styles.pickerContainer}>
+      {loadingClasses ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
         <Picker
           selectedValue={selectedClass}
-          onValueChange={(itemValue) => handleClassSelection(itemValue)}
+          onValueChange={(value) => {
+            setSelectedClass(value);
+            loadStudents(value);
+          }}
           style={styles.picker}
         >
-          <Picker.Item label="Choisir une classe" value={null} />
-          {classes.map((classItem) => (
-            <Picker.Item key={classItem.id} label={classItem.name} value={classItem.id} />
+          <Picker.Item label="Sélectionner une classe" value="" />
+          {classes.map((cls) => (
+            <Picker.Item key={cls.id} label={cls.nomClasse} value={cls.id} />
           ))}
         </Picker>
-      </View>
+      )}
 
-      <Text style={styles.label}>Sélectionner les absents :</Text>
-      <FlatList
-        data={students}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.studentItem}>
-            <Text>{item.name}</Text>
-            <CheckBox
-              value={absentStudents.includes(item.id)}
-              onValueChange={() => handleStudentSelection(item.id)}
-            />
-          </View>
-        )}
-        style={styles.studentList}
-      />
+      {/* Liste des élèves */}
+      {loadingStudents ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <FlatList
+          data={students}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.studentItem}>
+              <Text style={styles.studentName}>
+                {item.prenom} {item.nom}
+              </Text>
+              <TouchableOpacity
+                style={[
+                  styles.attendanceButton,
+                  attendance[item.id] ? styles.present : styles.absent,
+                ]}
+                onPress={() => toggleAttendance(item.id)}
+              >
+                <Text style={styles.attendanceText}>
+                  {attendance[item.id] ? 'Présent' : 'Absent'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      )}
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmitAbsences}>
-        <Text style={styles.submitButtonText}>Soumettre les absences</Text>
-      </TouchableOpacity>
+      {/* Bouton d'enregistrement */}
+      {selectedClass && students.length > 0 && (
+        <TouchableOpacity style={styles.saveButton} onPress={saveAttendance}>
+          <Text style={styles.saveButtonText}>Enregistrer</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
 
-// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#f9f9f9',
+    padding: 20,
+    backgroundColor: '#F5F5F5',
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#420475',
-    marginBottom: 20,
     textAlign: 'center',
+    marginBottom: 20,
   },
   label: {
-    fontSize: 18,
-    color: '#333',
-    marginBottom: 8,
-  },
-  pickerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    elevation: 3,
-    marginBottom: 20,
+    fontSize: 16,
+    marginBottom: 10,
   },
   picker: {
-    height: 50,
-    width: '100%',
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#DDD',
+    marginBottom: 20,
   },
   studentItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    padding: 15,
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#DDD',
   },
-  studentList: {
-    marginBottom: 20,
+  studentName: {
+    fontSize: 16,
   },
-  submitButton: {
-    backgroundColor: '#420475',
-    paddingVertical: 12,
+  attendanceButton: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  present: {
+    backgroundColor: '#4CAF50',
+  },
+  absent: {
+    backgroundColor: '#F44336',
+  },
+  attendanceText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  saveButton: {
+    backgroundColor: '#2196F3',
+    paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
+    marginTop: 20,
   },
-  submitButtonText: {
-    fontSize: 16,
-    color: '#fff',
+  saveButtonText: {
+    fontSize: 18,
+    color: '#FFF',
     fontWeight: 'bold',
   },
 });
 
-export default AssignAbsencesScreen;
+export default ManageAbsencesScreen;
