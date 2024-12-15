@@ -31,27 +31,27 @@ const EleveAccueilScreen = () => {
     }).start();
   }, []);
 
+  // Récupérer les données utilisateur
   const getData = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
+      const token = await AsyncStorage.getItem('token');  // Récupérer le token depuis AsyncStorage
       const res = await axios.post(`${API_URL}/userdata`, { token });
       setUserData(res.data.data);
     } catch (error) {
-      console.error(error);
+      console.error('Erreur lors de la récupération des données utilisateur:', error);
     }
   };
 
+  // Récupérer l'emploi du temps
   const fetchEmploiTemps = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userId');  // Récupérer l'ID de l'élève
-      const res = await axios.post(`${API_URL}/save-emploitempss`, { identifiant: userId });
+      const token = await AsyncStorage.getItem('token');  // Récupérer le token depuis AsyncStorage
+      const res = await axios.post(`${API_URL}/save-emploitempss`, { token });
       setEmploisTemps(res.data.emploiDuTemps);
     } catch (error) {
       console.error('Erreur lors de la récupération des emplois du temps:', error);
     }
   };
-  
-  
 
   const renderEmploiItem = ({ item }) => (
     <View style={styles.taskContainer}>

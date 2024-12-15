@@ -29,20 +29,9 @@ import EditUserScreen from './Screens/EditUserScreen';
 import ScheduleScreen from './Screens/EmploiTemps';
 import AssignClassScreen from './Screens/AjoutEleve';
 
+import ClassesScreen from './Screens/ProfClasses';
+import NotesScreen from './Screens/InserNotes';
 
-
-const DrawerNav = () => {
-  const Drawer = createDrawerNavigator();
-  return (
-    <Drawer.Navigator
-      drawerContent={props => <DrawerContent {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <Drawer.Screen name="Home" component={StackNav} />
-    </Drawer.Navigator>
-  );
-};
 
 // const StackNav = () => {
 //   const Stack = createNativeStackNavigator();
@@ -240,6 +229,9 @@ function App  () {
            <Stack.Screen options={{headerShown: true}}  name="esk" component={ AssignAbsencesScreen}/>
            <Stack.Screen options={{headerShown: false}}  name="esc" component={ CreateClassScreen}/>
            <Stack.Screen options={{headerShown: true}}  name="esq" component={ ManageAbsencesScreen}/>
+
+           <Stack.Screen options={{headerShown: true}}  name="Mes Classes" component={ClassesScreen}/>
+           <Stack.Screen options={{headerShown: true}}  name="Notes" component={NotesScreen}/>
  
 
       </Stack.Navigator>

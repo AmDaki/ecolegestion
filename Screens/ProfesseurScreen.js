@@ -21,7 +21,7 @@ const ProfesseurScreen = () => {
   
 
   useEffect(() => {
-    fetchUserData();
+    
     getData();
     getAllData();
   }, []);
@@ -47,15 +47,7 @@ const ProfesseurScreen = () => {
   }
   
   
-  const fetchUserData = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://192.168.1.69:5000/userdata', { token });
-      setUserData(response.data.data);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
+  
  
 
   
@@ -136,7 +128,7 @@ const ProfesseurScreen = () => {
             <Button
               mode="contained"
               icon="file-document-outline"
-              onPress={() => navigation.navigate('NotesScreen')}
+              onPress={() => navigation.navigate('Mes Classes')}
               style={styles.actionButton}
             >
               Voir les notes

@@ -22,21 +22,25 @@ const AssignClassScreen = () => {
     if (selectedLevel) {
       setLoadingClasses(true);
       axios
-        .get(`${API_URL}/get-classes-by-niveau?niveau=${selectedLevel}`)
-        .then((response) => {
-          setLoadingClasses(false);
-          if (Array.isArray(response.data)) {
-            setAvailableClasses(response.data);
-          } else {
-            setAvailableClasses([]);
-          }
-        })
-        .catch(() => {
-          setLoadingClasses(false);
-          Alert.alert('Erreur', 'Impossible de charger les classes.');
-        });
-
-      setLoadingStudents(true);
+      .get(`${API_URL}/get-classes-by-niveau?niveau=${selectedLevel}`)
+      .then((response) => {
+        setLoadingClasses(false);
+    
+        if (response.data.status === 'ok' && Array.isArray(response.data.classes)) {
+          setAvailableClasses(response.data.classes);
+        } else {
+          setAvailableClasses([]);
+          Alert.alert('Info', 'Aucune classe disponible pour ce niveau.');
+        }
+      })
+      .catch((error) => {
+        setLoadingClasses(false);
+    
+        // Affiche un message d'erreur détaillé si disponible
+        const errorMessage = error.response?.data?.message || 'Impossible de charger les classes.';
+        Alert.alert('Erreur', errorMessage);
+      });
+    
       axios
         .get(`${API_URL}/get-eleves-by-niveau?niveau=${selectedLevel}`)
         .then((response) => {
@@ -80,7 +84,9 @@ const AssignClassScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Attribuer une Classe aux Élèves</Text>
+       <View style={styles.header}>
+       <Text style={styles.headerText}>Attribuer une Classe aux Élèves</Text>
+       </View>
 
       {/* Sélection du Niveau */}
       <Text style={styles.label}>Sélectionner un Niveau :</Text>
@@ -201,6 +207,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 20,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 10,
+  },
+  header: {
+    backgroundColor: '#6200ee',
+    padding: 20,
+    width: '100%',
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 4,
   },
   buttonText: {
     fontSize: 18,
