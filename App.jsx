@@ -33,6 +33,10 @@ import ClassesScreen from './Screens/ProfClasses';
 import NotesScreen from './Screens/InserNotes';
 
 
+
+import ImportFileScreen from './Screens/ImportFileScreen';
+import NotesListScreen from './Screens/NotrlistScreen';
+
 // const StackNav = () => {
 //   const Stack = createNativeStackNavigator();
 //   const navigation = useNavigation();
@@ -231,8 +235,27 @@ function App  () {
            <Stack.Screen options={{headerShown: true}}  name="esq" component={ ManageAbsencesScreen}/>
 
            <Stack.Screen options={{headerShown: true}}  name="Mes Classes" component={ClassesScreen}/>
-           <Stack.Screen options={{headerShown: true}}  name="Notes" component={NotesScreen}/>
+       
+
+           <Stack.Screen name="Notes" component={NotesScreen} />
+          
  
+           <Stack.Screen
+          name="ImportFileScreen"
+          component={ImportFileScreen}
+          options={{ title: 'Importer un fichier' }}
+        />
+        <Stack.Screen
+          name="NotesScreen"
+          component={NotesScreen}
+          options={{ title: 'Fichier importé' }}
+        />
+
+<Stack.Screen
+          name="NotesListScreen"
+          component={NotesListScreen}
+          options={{ title: 'Fichier importé' }}
+        />
 
       </Stack.Navigator>
 
