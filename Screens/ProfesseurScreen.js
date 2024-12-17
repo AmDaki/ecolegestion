@@ -128,7 +128,7 @@ const ProfesseurScreen = () => {
             <Button
               mode="contained"
               icon="file-document-outline"
-              onPress={() => navigation.navigate('ImportFileScreen')}
+              onPress={() => navigation.navigate('SelectClass')}
               style={styles.actionButton}
             >
               Voir les notes

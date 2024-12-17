@@ -7,6 +7,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AdminProfileScreen from './Screens/AdminScreen';
 
+import SelectClassScreen from './Screens/SelectClassScreen';
+import UploadNotesScreen from './Screens/UploadNoteScreen';
+import MyNotesScreen from './Screens/MyNotesScreen';
 
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -257,6 +260,10 @@ function App  () {
           options={{ title: 'Fichier importé' }}
         />
 
+<Stack.Screen name="SelectClass" component={SelectClassScreen} />
+      <Stack.Screen name="UploadNotes" component={UploadNotesScreen} />
+      <Stack.Screen name="MyNotes" component={MyNotesScreen} />
+
       </Stack.Navigator>
 
      
@@ -271,4 +278,4 @@ function App  () {
 
 
 
-export default App
+export default App;

@@ -98,21 +98,27 @@ const EleveAccueilScreen = () => {
 
         {/* Navigation Cards */}
         <View style={styles.cardsContainer}>
-          {renderCard('Mes Notes', 'Consultez vos notes de chaque matière.', 'file-document-outline', 'NotesScreen')}
+          {renderCard('Mes Notes', 'Consultez vos notes de chaque matière.', 'file-document-outline', 'MyNotes', userData.classe)}
           {renderCard('Messages', 'Envoyez et recevez des messages.', 'email', 'MessagesScreen')}
         </View>
       </Animated.View>
     </View>
   );
 
-  function renderCard(title, description, icon, navigateTo) {
+  function renderCard(title, description, icon, navigateTo, nomClasse) {
     return (
       <View style={styles.card} key={title}>
         <Text style={styles.cardTitle}>{title}</Text>
         <Text style={styles.cardDescription}>{description}</Text>
         <TouchableOpacity
           style={styles.cardButton}
-          onPress={() => navigation.navigate(navigateTo)}
+          onPress={() => {
+            if (nomClasse) {
+              navigation.navigate(navigateTo, { nomClasse }); // Transmettre nomClasse aux paramètres
+            } else {
+              navigation.navigate(navigateTo); // Naviguer sans paramètres si nomClasse est indisponible
+            }
+          }}
         >
           <FontAwesome name={icon} size={20} color="#fff" />
           <Text style={styles.cardButtonText}>Accéder</Text>
